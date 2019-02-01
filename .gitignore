@@ -1,0 +1,60 @@
+### Etc. ###
+*.tmp
+*.bak
+*.lck
+*.lock
+*.class
+*~
+scripts/
+config.conf
+
+
+### IDE Files ###
+
+# Eclipse
+.project
+.settings/
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+.recommenders
+
+# BlueJ
+*.ctxt
+.mtj.tmp/
+
+# IntelliJ
+out/
+.idea/
+.idea_modules/
+
+# Visual Studio
+.vscode/*
+
+
+### Operating System ###
+
+# Linux
+.directory
+.Trash-*
+
+# Windows
+desktop.ini
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+*.lnk
+
+# Mac OS X
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Java Virtual Machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
