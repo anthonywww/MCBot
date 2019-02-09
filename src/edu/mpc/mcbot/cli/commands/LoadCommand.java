@@ -11,7 +11,7 @@ import edu.mpc.mcbot.cli.ICLICommand;
 
 public class LoadCommand implements ICLICommand {
 
-	private static Logger logger = Logger.getLogger("");
+	private static final Logger logger = Logger.getLogger("");
 
 	public LoadCommand() {
 		
@@ -36,7 +36,6 @@ public class LoadCommand implements ICLICommand {
 		} else {
 			logger.warning("load: " + params[0] + " is not a lua script.");
 		}
-
 	}
 
 	@Override
@@ -59,7 +58,7 @@ public class LoadCommand implements ICLICommand {
 		return true;
 	}
 
-	private String readFileAsString(File f) throws IOException {
+	private static final String readFileAsString(File f) throws IOException {
 		StringBuffer fileData = new StringBuffer();
 		BufferedReader reader = new BufferedReader(new FileReader(f));
 		char[] buf = new char[1024];

@@ -1,25 +1,32 @@
 package edu.mpc.mcbot.cli.commands;
 
-import edu.mpc.mcbot.MCBot;
 import edu.mpc.mcbot.cli.ICLICommand;
 
-public class SayCommand implements ICLICommand {
+public class RotateCommand implements ICLICommand {
+	
+	public RotateCommand() {
+		
+	}
 	
 	@Override
 	public void invoke(String[] params) {
-		if (params.length > 0) {
-			MCBot.getInstance().getPlayer().sendMessage(String.join(" ", params).trim());
-		}
+		
+		// !rotate <yawDeg> <pitchDeg>
+		// !rotate yaw <deg>
+		// !rotate pitch <deg>
+		
+		
+		
 	}
 	
 	@Override
 	public String commandName() {
-		return "say";
+		return "rotate";
 	}
 	
 	@Override
 	public String commandDescription() {
-		return "Send a message to the chat.";
+		return "Rotate the bot";
 	}
 	
 	@Override

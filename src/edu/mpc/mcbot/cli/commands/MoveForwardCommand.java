@@ -2,12 +2,11 @@ package edu.mpc.mcbot.cli.commands;
 
 import java.util.logging.Logger;
 
-import edu.mpc.mcbot.MCBot;
 import edu.mpc.mcbot.cli.ICLICommand;
 
 public class MoveForwardCommand implements ICLICommand {
 	
-	private static Logger logger = Logger.getLogger("");
+	private static final Logger logger = Logger.getLogger("");
 	
 	public MoveForwardCommand() {
 		
@@ -31,12 +30,12 @@ public class MoveForwardCommand implements ICLICommand {
 		}
 		
 		
-		
+		// TODO: Move bot forward
 	}
 	
 	@Override
 	public String commandName() {
-		return "say";
+		return "forward";
 	}
 	
 	@Override

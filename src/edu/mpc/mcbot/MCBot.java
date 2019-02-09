@@ -1,24 +1,30 @@
 package edu.mpc.mcbot;
 
+import java.net.ConnectException;
+import java.net.Proxy;
 import java.util.logging.Level;
 
 import edu.mpc.mcbot.cli.ICLICommand;
 import edu.mpc.mcbot.cli.ICLIEvent;
 import edu.mpc.mcbot.cli.ICLIInvalidCommand;
+import edu.mpc.mcbot.cli.commands.ExitCommand;
 import edu.mpc.mcbot.cli.commands.LoadCommand;
+import edu.mpc.mcbot.cli.commands.MoveForwardCommand;
+import edu.mpc.mcbot.cli.commands.RotateCommand;
 import edu.mpc.mcbot.cli.commands.SayCommand;
+import edu.mpc.mcbot.entity.SelfPlayer;
 import edu.mpc.mcbot.lua.LuaSandbox;
 
 public class MCBot {
 	
 	public static final String NAME = "MCBot";
-	public static final String VERSION = "0.1.0";
+	public static final String VERSION = "0.2.0";
 	private static MCBot instance;
 	private boolean running;
 	
 	private BotConfig config;
 	private Terminal terminal;
-	private MCClient client;
+	private SelfPlayer player;
 	private LuaSandbox lua;
 	
 	public MCBot(BotConfig config) {
@@ -43,12 +49,16 @@ public class MCBot {
 				shutdown();
 			}
 			@Override
-			public void onReturnEvent(String line) {}
+			public void onReturnEvent(String line) {
+				
+			}
 			@Override
-			public void onCommandEvent(String command, String[] params, ICLICommand handler) {}
+			public void onCommandEvent(String command, String[] params, ICLICommand handler) {
+				
+			}
 			@Override
 			public void eofInterruptEvent() {
-				terminal.print(Level.INFO, "Caught interrupt signal ^D use ^C to shutdown.");
+				terminal.print(Level.FINER, "Caught interrupt signal ^D use ^C to shutdown.");
 			}
 		});
 		terminal.setInvalidCommandHandler(new ICLIInvalidCommand() {
@@ -57,67 +67,47 @@ public class MCBot {
 				
 			}
 		});
-		terminal.registerCommand(new ICLICommand() {
-			@Override
-			public void invoke(String[] params) {
-				shutdown();
-			}
-			
-			@Override
-			public String commandName() {
-				return "exit";
-			}
-			
-			@Override
-			public String commandDescription() {
-				return "Shutdown the bot.";
-			}
-			
-			@Override
-			public boolean caseSensitive() {
-				return false;
-			}
-			
-			@Override
-			public boolean addToCompleter() {
-				return true;
-			}
-		});
 		
 		// Register CLI commands
+		terminal.registerCommand(new ExitCommand());
 		terminal.registerCommand(new SayCommand());
 		terminal.registerCommand(new LoadCommand());
+		terminal.registerCommand(new MoveForwardCommand());
+		terminal.registerCommand(new RotateCommand());
 		
+		// Initialize the terminal
 		terminal.initialize();
 		terminal.print(Level.INFO, NAME + " v" + VERSION);
+		terminal.print(Level.INFO, "Type 'exit' to shutdown the bot.");
 		instance = this;
 		running = true;
 		
+		
 		// ---- Initialize Components ----
-		
 		lua = new LuaSandbox();
-		
-		client = new MCClient();
-		
-		
+		player = new SelfPlayer(config.getUsername());
 		
 		
 		// ---- Loop ----
 		while (running) {
-			
 			try {
-				Thread.sleep(50);
+				
+				if (!player.isConnected()) {
+					player.connect(config.getServerAddress(), config.getServerPort(), Proxy.NO_PROXY, config.getUsername(), config.getPassword());
+					Thread.sleep(3000);
+				}
+				
+				Thread.yield();
+			} catch (ConnectException e) {
+				terminal.handleException(e);
 			} catch (InterruptedException e) {}
-			
 		}
 		
 		
 		
 		
 		// ---- Shutdown procedure ----
-		
-		client.disconnect();
-		
+		player.disconnect();
 		terminal.shutdown();
 		
 		System.exit(0);
@@ -133,8 +123,8 @@ public class MCBot {
 		return config;
 	}
 	
-	public MCClient getClient() {
-		return client;
+	public SelfPlayer getPlayer() {
+		return player;
 	}
 	
 	public LuaSandbox getLua() {
@@ -149,6 +139,7 @@ public class MCBot {
 	public synchronized final void shutdown() {
 		running = false;
 		terminal.print(Level.INFO, "Shutting down ...");
+		Thread.currentThread().interrupt();
 	}
 	
 	/**
