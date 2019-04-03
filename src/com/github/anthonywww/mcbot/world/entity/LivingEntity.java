@@ -1,4 +1,4 @@
-package com.github.anthonywww.mcbot.entity;
+package com.github.anthonywww.mcbot.world.entity;
 
 public class LivingEntity extends Entity {
 	

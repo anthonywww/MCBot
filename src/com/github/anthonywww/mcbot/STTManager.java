@@ -12,9 +12,10 @@ import edu.cmu.sphinx.api.SpeechResult;
 public class STTManager {
 
 	private static boolean enabled;
-	private static ExecutorService executor = Executors.newSingleThreadExecutor();
+	private static ExecutorService executor;
 
 	private STTManager() {
+		executor = Executors.newSingleThreadExecutor();
 	}
 
 	private static void initialize() {

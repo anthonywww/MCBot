@@ -5,19 +5,39 @@ public final class MathHelper {
 	// Prevent instantiation
 	private MathHelper() {}
 
-	public static final double degreesToRadians(double degrees) {
+	/**
+	 * Convert degrees to radians
+	 * @param degrees
+	 * @return
+	 */
+	public static final double degreesToRadians(final double degrees) {
 		return ((degrees*Math.PI)/180);
 	}
 	
-	public static final float degreesToRadians(float degrees) {
+	/**
+	 * Convert degrees to radians
+	 * @param degrees
+	 * @return
+	 */
+	public static final float degreesToRadians(final float degrees) {
 		return (float) ((degrees*Math.PI)/180);
 	}
 	
-	public static final double radiansToDegrees(double radians) {
+	/**
+	 * Convert radians to degrees
+	 * @param radians
+	 * @return
+	 */
+	public static final double radiansToDegrees(final double radians) {
 		return ((radians*180)/Math.PI);
 	}
 	
-	public static final float radiansToDegrees(float radians) {
+	/**
+	 * Convert radians to degrees
+	 * @param radians
+	 * @return
+	 */
+	public static final float radiansToDegrees(final float radians) {
 		return (float) ((radians*180)/Math.PI);
 	}
 	
@@ -27,7 +47,7 @@ public final class MathHelper {
 	 * @param power
 	 * @return
 	 */
-	public static final double power(double base, double power) {
+	public static final double power(final double base, final double power) {
 		if (power == 0) {
 			return 1;
 		} else if (power == 1) {
@@ -37,6 +57,24 @@ public final class MathHelper {
 		}
 		
 		return Math.pow(base, power);
+	}
+	
+	/**
+	 * Raise a number base to a power
+	 * @param base
+	 * @param power
+	 * @return
+	 */
+	public static final float power(final float base, final float power) {
+		if (power == 0) {
+			return 1;
+		} else if (power == 1) {
+			return base;
+		} else if (power == 2) {
+			return (base * base);
+		}
+		
+		return (float) Math.pow(base, power);
 	}
 	
 	/**
@@ -158,5 +196,35 @@ public final class MathHelper {
 	public static final float interpolate(float x1, float y1, float xb, float x2, float y2) {
 		return y1+((xb-x1)*(y2-y1))/(x2-x1);
 	}
+	
+	/**
+	 * Get the squared distance from x1,y1,z1 to x2,y2,z2
+	 * @param x1
+	 * @param y1
+	 * @param z1
+	 * @param x2
+	 * @param y2
+	 * @param z2
+	 * @return
+	 */
+	public static final float getDistanceSq(float x1, float y1, float z1, float x2, float y2, float z2) {
+		return (float) (Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2) + Math.pow(z2-z1, 2));
+	}
+	
+	/**
+	 * Get the distance from x1,y1,z1 to x2,y2,z2 (could be slow!)
+	 * @param x1
+	 * @param y1
+	 * @param z1
+	 * @param x2
+	 * @param y2
+	 * @param z2
+	 * @return
+	 */
+	public static final float getDistance(float x1, float y1, float z1, float x2, float y2, float z2) {
+		return (float) Math.sqrt(getDistanceSq(x1, y1, z1, x2, y2, z2));
+	}
+	
+	
 	
 }

@@ -19,11 +19,11 @@ public class Bot extends TwoArgFunction {
 		bot.set("cos", new cos());
 		bot.set("sleep", new sleep());
 		bot.set("sendMessage", new send_message());
+		bot.set("rotate", new rotate());
 		bot.set("rotatePitch", new rotate_pitch());
 		bot.set("rotateYaw", new rotate_yaw());
-		bot.set("goto", new walk_to());
-//		bot.set("moveForward", new move_forward());
-//		bot.set("moveBackward", new move_backward());
+		bot.set("moveForward", new move_forward());
+		bot.set("moveBackward", new move_backward());
 //		bot.set("moveLeft", new move_left());
 //		bot.set("moveRight", new move_right());
 
@@ -76,44 +76,55 @@ public class Bot extends TwoArgFunction {
 			try {
 				Thread.sleep(ms);
 			} catch (InterruptedException e) {
+				return LuaValue.error("Sleep Interrupted!");
 			}
 
+			return LuaValue.NIL;
+		}
+	}
+	
+	static class rotate extends TwoArgFunction {
+		@Override
+		public LuaValue call(LuaValue yaw, LuaValue pitch) {
+			MCBot.getInstance().getPlayer().sendRotate((float) yaw.checkdouble(), (float) pitch.checkdouble());
 			return LuaValue.NIL;
 		}
 	}
 
 	static class rotate_pitch extends OneArgFunction {
 		@Override
-		public LuaValue call(LuaValue x) {
-			MCBot.getInstance().getPlayer().sendRotate(0.0f, x.tofloat());
+		public LuaValue call(LuaValue angle) {
+			MCBot.getInstance().getPlayer().sendRotate(0.0f, (float)angle.checkdouble());
 			return LuaValue.NIL;
 		}
 	}
 
 	static class rotate_yaw extends OneArgFunction {
 		@Override
-		public LuaValue call(LuaValue x) {
-			MCBot.getInstance().getPlayer().sendRotate(x.tofloat(), 0.0f);
+		public LuaValue call(LuaValue angle) {
+			MCBot.getInstance().getPlayer().sendRotate((float)angle.checkdouble(), 0.0f);
 			return LuaValue.NIL;
 		}
 	}
 	
-	static class walk_to extends OneArgFunction {
+	static class move_forward extends OneArgFunction {
 		@Override
-		public LuaValue call(LuaValue vector) {
-			
-			if (vector.istable()) {
-				if (vector.arg(1).type() == LuaValue.TNUMBER && vector.arg(2).type() == LuaValue.TNUMBER && vector.arg(3).type() == LuaValue.TNUMBER) {
-					double dx = vector.arg(1).todouble();
-					double dy = vector.arg(2).todouble();
-					double dz = vector.arg(3).todouble();
-					MCBot.getInstance().getPlayer().move(dx, dy, dz);
-					return LuaValue.TRUE;
-				}
-			}
-			
-			return LuaValue.error("Expected a table with 3 numbers; {x=Number, y=Number, z=Number}");
+		public LuaValue call(LuaValue distance) {
+			MCBot.getInstance().getPlayer().moveForward(distance.checkdouble());
+			return LuaValue.NIL;
 		}
 	}
-
+	
+	static class move_backward extends OneArgFunction {
+		@Override
+		public LuaValue call(LuaValue distance) {
+			MCBot.getInstance().getPlayer().moveForward(distance.checkdouble());
+			return LuaValue.NIL;
+		}
+	}
+	
+	
+	
+	
+	
 }

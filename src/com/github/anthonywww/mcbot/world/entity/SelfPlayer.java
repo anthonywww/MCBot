@@ -1,4 +1,4 @@
-package com.github.anthonywww.mcbot.entity;
+package com.github.anthonywww.mcbot.world.entity;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,6 +11,9 @@ import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
+
+import org.joml.Math;
+import org.joml.Vector3d;
 
 import com.github.anthonywww.mcbot.MCBot;
 import com.github.anthonywww.mcbot.Terminal;
@@ -137,9 +140,9 @@ public class SelfPlayer extends Player {
 	}
 	
 	public void centerPosition() {
-		double dx = getX() > 0 ? Math.floor(getX()) + 0.5d : Math.round(getX()) - 0.5d;
-		double dy = Math.floor(getY());
-		double dz = getZ() > 0 ? Math.floor(getZ()) + 0.5d : Math.round(getZ()) - 0.5d;
+		final double dx = getX() > 0 ? Math.floor(getX()) + 0.5d : Math.round(getX()) - 0.5d;
+		final double dy = Math.floor(getY());
+		final double dz = getZ() > 0 ? Math.floor(getZ()) + 0.5d : Math.round(getZ()) - 0.5d;
 		
 		setX(dx);
 		setY(dy);
@@ -148,19 +151,45 @@ public class SelfPlayer extends Player {
 		client.getSession().send(new ClientPlayerPositionRotationPacket(isOnGround(), getX(), getY(), getZ(), getYaw(), getPitch()));
 	}
 	
-	
+	private Vector3d getUnitVector(double angleYaw, double anglePitch) {
+		final double dx = -Math.cos(anglePitch) * Math.sin(angleYaw);
+		final double dy = -Math.sin(anglePitch);
+		final double dz = Math.cos(anglePitch) * Math.cos(angleYaw);
+		
+		return new Vector3d(dx, dy, dz);
+	}
 	
 	public void moveForward(double distance) {
-		distance = Math.abs(distance);
+		final Vector3d vec = getUnitVector(Math.toRadians(getYaw()), Math.toRadians(getPitch()));
 		
-		double dx = -Math.cos(Math.toRadians(getPitch())) * Math.sin(Math.toRadians(getYaw()));
-		double dy = -Math.sin(Math.toRadians(getPitch()));
-		double dz = Math.cos(Math.toRadians(getPitch())) * Math.cos(Math.toRadians(getYaw()));
+		MCBot.getInstance().log(Level.INFO, "Delta: " + vec.x*distance + ", " + vec.y*distance + ", " + vec.z*distance);
 		
-		MCBot.getInstance().log(Level.INFO, "Delta: " + dx*distance + ", " + dy*distance + ", " + dz*distance);
-		
-		move(dx*distance, dy*distance, dz*distance);
+		move(vec.x*distance, vec.y*distance, vec.z*distance);
 	}
+	
+	public void moveBackward(double distance) {
+		moveForward(-distance);
+	}
+	
+	public void moveLeft(double distance) {
+		// FIXME: Wrap the yaw-angle 90 degrees and use the same trig functions to find the unit vector
+		double yaw = getYaw();
+		
+		if (yaw+90 > 180) {
+			double error = (180 - yaw+90);
+			yaw = -180 - error;
+		} else {
+			yaw = yaw + 90;
+		}
+		
+		final Vector3d vec = getUnitVector(Math.toRadians(yaw), Math.toRadians(getPitch()));
+		move(vec.x*distance, vec.y*distance, vec.z*distance);
+	}
+	
+	public void moveRight(double distance) {
+		moveLeft(-distance);
+	}
+	
 	
 	
 	
@@ -168,7 +197,7 @@ public class SelfPlayer extends Player {
 	public void move(double dx, double dy, double dz) {
 		centerPosition();
 
-		int steps = (int) ((int) 2.0 * Math.floor(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2) + Math.pow(dz, 2))));
+		int steps = (int) ((int) 2.0 * Math.floor(Math.sqrt(java.lang.Math.pow(dx, 2) + java.lang.Math.pow(dy, 2) + java.lang.Math.pow(dz, 2))));
 		double sx = dx / steps;
 		double sy = dy / steps;
 		double sz = dz / steps;
@@ -192,6 +221,7 @@ public class SelfPlayer extends Player {
 		Client statusClient = new Client(address, port, protocol, new TcpSessionFactory(proxy));
 
 		statusClient.getSession().setFlag(MinecraftConstants.AUTH_PROXY_KEY, proxy);
+		
 		statusClient.getSession().setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, new ServerInfoHandler() {
 			@Override
 			public void handle(Session session, ServerStatusInfo info) {
@@ -202,6 +232,7 @@ public class SelfPlayer extends Player {
 				MCBot.getInstance().log(Level.FINER, "Icon: " + info.getIcon());
 			}
 		});
+		
 		statusClient.getSession().setFlag(MinecraftConstants.SERVER_PING_TIME_HANDLER_KEY, new ServerPingTimeHandler() {
 			@Override
 			public void handle(Session session, long pingTime) {

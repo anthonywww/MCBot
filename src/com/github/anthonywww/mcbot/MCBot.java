@@ -9,14 +9,14 @@ import com.github.anthonywww.mcbot.cli.ICLICommand;
 import com.github.anthonywww.mcbot.cli.ICLIEvent;
 import com.github.anthonywww.mcbot.cli.ICLIInvalidCommand;
 import com.github.anthonywww.mcbot.cli.commands.ExitCommand;
-import com.github.anthonywww.mcbot.cli.commands.GotoCommand;
 import com.github.anthonywww.mcbot.cli.commands.LoadCommand;
 import com.github.anthonywww.mcbot.cli.commands.MoveForwardCommand;
 import com.github.anthonywww.mcbot.cli.commands.RotateCommand;
 import com.github.anthonywww.mcbot.cli.commands.SayCommand;
 import com.github.anthonywww.mcbot.cli.commands.VoiceCommand;
-import com.github.anthonywww.mcbot.entity.SelfPlayer;
+import com.github.anthonywww.mcbot.event.EventBus;
 import com.github.anthonywww.mcbot.lua.LuaSandbox;
+import com.github.anthonywww.mcbot.world.entity.SelfPlayer;
 
 public class MCBot {
 	
@@ -29,6 +29,7 @@ public class MCBot {
 	private Terminal terminal;
 	private SelfPlayer player;
 	private LuaSandbox lua;
+	private EventBus eventBus;
 	
 	public MCBot(BotConfig config) {
 		
@@ -159,6 +160,11 @@ public class MCBot {
 		return lua;
 	}
 	
+	
+	public EventBus getEventBus() {
+		return eventBus;
+	}
+	
 	/**
 	 * Shutdown the bot
 	 */
@@ -170,7 +176,7 @@ public class MCBot {
 	}
 	
 	/**
-	 * Singleton method
+	 * Get the current running instance of MCBot
 	 * @return
 	 */
 	public static final MCBot getInstance() {
