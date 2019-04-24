@@ -15,7 +15,7 @@ public final class BlockLocation {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		string = "Block[" + x + "," + y + "," + z + "]";
+		string = "BlockLocation[" + x + "," + y + "," + z + "]";
 		hashcode = string.hashCode();
 	}
 	

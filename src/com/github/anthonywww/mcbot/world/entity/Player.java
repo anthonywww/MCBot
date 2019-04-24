@@ -16,6 +16,7 @@ public class Player extends LivingEntity {
 	private int food;
 
 	public Player(String username) {
+		super(0, username);
 		this.username = username;
 		this.invincible = false;
 		this.canFly = false;

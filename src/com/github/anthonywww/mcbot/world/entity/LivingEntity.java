@@ -6,14 +6,14 @@ public class LivingEntity extends Entity {
 	private boolean isDead;
 	private boolean isOnGround;
 	
-	public LivingEntity() {
-		super();
+	public LivingEntity(int eid) {
+		super(eid);
 		health = 20.0f;
 		isDead = false;
 	}
 	
-	public LivingEntity(float health) {
-		super();
+	public LivingEntity(int eid, String name) {
+		super(eid, name);
 		health = 20.0f;
 		isDead = false;
 	}
@@ -40,6 +40,11 @@ public class LivingEntity extends Entity {
 
 	public void setOnGround(boolean isOnGround) {
 		this.isOnGround = isOnGround;
+	}
+
+	@Override
+	public String toString() {
+		return "[LivingEntity: " + name + " " + super.toString() + "]";
 	}
 	
 }

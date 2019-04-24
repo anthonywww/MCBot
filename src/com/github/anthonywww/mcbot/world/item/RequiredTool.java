@@ -1,0 +1,43 @@
+package com.github.anthonywww.mcbot.world.item;
+
+public enum RequiredTool {
+	
+	// Required Tools
+	ANY,
+	SHEARS,
+	BUCKET,
+	
+	WOODEN_PICKAXE,
+	STONE_PICKAXE,
+	IRON_PICKAXE,
+	GOLD_PICKAXE,
+	DIAMOND_PICKAXE,
+	
+	WOODEN_AXE,
+	STONE_AXE,
+	IRON_AXE,
+	GOLD_AXE,
+	DIAMOND_AXE,
+	
+	WOODEN_SHOVEL,
+	STONE_SHOVEL,
+	IRON_SHOVEL,
+	GOLD_SHOVEL,
+	DIAMOND_SHOVEL,
+	
+	WOODEN_HOE,
+	STONE_HOE,
+	IRON_HOE,
+	GOLD_HOE,
+	DIAMOND_HOE,
+	
+	WOODEN_SWORD,
+	STONE_SWORD,
+	IRON_SWORD,
+	GOLD_SWORD,
+	DIAMOND_SWORD,
+	
+	// Required Enchantments
+	SILK_TOUCH
+	
+}

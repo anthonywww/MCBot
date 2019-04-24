@@ -29,6 +29,7 @@ public class MCBot {
 	private Terminal terminal;
 	private SelfPlayer player;
 	private LuaSandbox lua;
+	private ArduinoStatus arduino;
 	private EventBus eventBus;
 	
 	public MCBot(BotConfig config) {
@@ -92,7 +93,24 @@ public class MCBot {
 		// ---- Initialize Components ----
 		lua = new LuaSandbox();
 		player = new SelfPlayer(config.getUsername());
+		arduino = new ArduinoStatus();
+		arduino.setColor(0, 1, 0);
 		
+		try {
+			arduino.setColor(0, 1, 1);
+			Thread.sleep(100);
+			arduino.setColor(1, 0, 1);
+			Thread.sleep(100);
+			arduino.setColor(1, 1, 0);
+			Thread.sleep(100);
+			arduino.setColor(1, 1, 1);
+			Thread.sleep(100);
+			arduino.setColor(1, 0, 0);
+			Thread.sleep(100);
+			arduino.setColor(0, 0, 1);
+		} catch (InterruptedException e) {}
+		
+		arduino.setBlinkingColor(0, 128, 0, 400);
 		
 		// ---- Loop ----
 		while (running) {
@@ -102,7 +120,7 @@ public class MCBot {
 					player.connect(config.getServerAddress(), config.getServerPort(), Proxy.NO_PROXY, config.getUsername(), config.getPassword());
 					Thread.sleep(3000);
 				}
-				
+
 				Thread.yield();
 			} catch (ConnectException e) {
 				terminal.handleException(e);
@@ -113,6 +131,7 @@ public class MCBot {
 		
 		
 		// ---- Shutdown procedure ----
+		arduino.shutdown();
 		player.disconnect();
 		terminal.shutdown();
 		

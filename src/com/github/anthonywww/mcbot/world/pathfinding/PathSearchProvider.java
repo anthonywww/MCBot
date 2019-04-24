@@ -1,6 +1,7 @@
 package com.github.anthonywww.mcbot.world.pathfinding;
 
 import com.github.anthonywww.mcbot.world.World;
+import com.github.anthonywww.mcbot.world.WorldPhysics;
 import com.github.anthonywww.mcbot.world.block.BlockLocation;
 
 public interface PathSearchProvider {

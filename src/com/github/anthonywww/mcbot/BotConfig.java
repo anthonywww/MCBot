@@ -26,7 +26,7 @@ public final class BotConfig implements Runnable {
 	private double minFollowRange;
 
 	public BotConfig() {
-		this.logLevel = Level.INFO;
+		this.logLevel = Level.FINEST;
 		this.username = "MCBot";
 		this.password = "";
 		this.serverAddress = "127.0.0.1";

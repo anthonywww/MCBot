@@ -7,15 +7,13 @@ public class Block {
 	private final World world;
 	private final Chunk chunk;
 	private final BlockLocation location;
-	//private final String name;
-	private final int id, metadata;
+	private final BlockType type;
 
-	public Block(World world, Chunk chunk, BlockLocation location, int id, int metadata) {
+	public Block(World world, Chunk chunk, BlockLocation location, BlockType type) {
 		this.world = world;
 		this.chunk = chunk;
 		this.location = location;
-		this.id = id;
-		this.metadata = metadata;
+		this.type = type;
 	}
 
 	public World getWorld() {
@@ -30,11 +28,7 @@ public class Block {
 		return location;
 	}
 	
-	public int getId() {
-		return id;
-	}
-
-	public int getMetadata() {
-		return metadata;
+	public BlockType getType() {
+		return type;
 	}
 }

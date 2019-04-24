@@ -15,8 +15,7 @@ public final class Chunk {
 	private final byte[] blocks, metadata, light, skylight, biomes;
 	private final Map<BlockLocation, TileEntity> tileEntities;
 
-	public Chunk(World world, ChunkLocation location, byte[] blocks, byte[] metadata, byte[] light, byte[] skylight,
-			byte[] biomes) {
+	public Chunk(World world, ChunkLocation location, byte[] blocks, byte[] metadata, byte[] light, byte[] skylight, byte[] biomes) {
 		this.world = world;
 		this.location = location;
 		this.baseLocation = new BlockLocation(location);

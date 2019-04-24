@@ -265,7 +265,7 @@ public class SelfPlayer extends Player {
 			if (event.getPacket() instanceof ServerJoinGamePacket) {
 				ServerJoinGamePacket packet = (ServerJoinGamePacket) event.getPacket();
 
-				setEntityId(packet.getEntityId());
+				setId(packet.getEntityId());
 				setGamemode(packet.getGameMode());
 				setOnGround(true);
 
