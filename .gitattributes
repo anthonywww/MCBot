@@ -1,0 +1,2 @@
+*.lua linguist-language=Lua
+*.sh linguist-language=Shell

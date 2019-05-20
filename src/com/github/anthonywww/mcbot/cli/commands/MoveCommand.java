@@ -33,13 +33,13 @@ public class MoveCommand implements ICLICommand {
 				MCBot.getInstance().getPlayer().moveRight(units);
 				break;
 			default:
-				logger.warning("Usage: " + commandName() + "<direction> <units>. Direction must be FORWARD, BACKWARD, LEFT, or RIGHT");
+				logger.warning("Usage: " + commandName() + "<direction> <units>. Direction must be FORWARD, BACKWARD, LEFT, or RIGHT.");
 				break;
 			}
 			
 			logger.info(String.format("Moved bot %s %s units.", params[0], params[1]));
 		} catch (NumberFormatException e) {
-			logger.warning("Usage: " + commandName() + " <direction> <units>. Units must be a number");
+			logger.warning("Usage: " + commandName() + " <direction> <units>. Units must be a number.");
 		}
 	}
 	
