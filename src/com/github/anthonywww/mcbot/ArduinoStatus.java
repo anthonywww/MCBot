@@ -49,6 +49,11 @@ class ArduinoStatus {
 		}
 	}
 	
+	
+	
+	
+	
+	
 	public void setColor(int red, int green, int blue) {
 		blinking = false;
 		color(red, green, blue);

@@ -2,26 +2,35 @@ package com.github.anthonywww.mcbot;
 
 import java.net.ConnectException;
 import java.net.Proxy;
+import java.util.Arrays;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.logging.Level;
+
+import javax.naming.InvalidNameException;
 
 import com.github.anthonywww.mcbot.cli.AnsiColor;
 import com.github.anthonywww.mcbot.cli.ICLICommand;
 import com.github.anthonywww.mcbot.cli.ICLIEvent;
 import com.github.anthonywww.mcbot.cli.ICLIInvalidCommand;
 import com.github.anthonywww.mcbot.cli.commands.ExitCommand;
+import com.github.anthonywww.mcbot.cli.commands.GotoCommand;
+import com.github.anthonywww.mcbot.cli.commands.HelpCommand;
 import com.github.anthonywww.mcbot.cli.commands.LoadCommand;
-import com.github.anthonywww.mcbot.cli.commands.MoveForwardCommand;
+import com.github.anthonywww.mcbot.cli.commands.MoveCommand;
 import com.github.anthonywww.mcbot.cli.commands.RotateCommand;
 import com.github.anthonywww.mcbot.cli.commands.SayCommand;
-import com.github.anthonywww.mcbot.cli.commands.VoiceCommand;
 import com.github.anthonywww.mcbot.event.EventBus;
 import com.github.anthonywww.mcbot.lua.LuaSandbox;
+import com.github.anthonywww.mcbot.task.Task;
+import com.github.anthonywww.mcbot.utils.Timer;
+import com.github.anthonywww.mcbot.utils.Timer.Profile;
 import com.github.anthonywww.mcbot.world.entity.SelfPlayer;
 
 public class MCBot {
 	
 	public static final String NAME = "MCBot";
-	public static final String VERSION = "0.2.0";
+	public static final String VERSION = "0.2.2";
 	private static MCBot instance;
 	private boolean running;
 	
@@ -29,20 +38,21 @@ public class MCBot {
 	private Terminal terminal;
 	private SelfPlayer player;
 	private LuaSandbox lua;
-	private ArduinoStatus arduino;
+	//private ArduinoStatus arduino;
+	private Queue<Task> tasks;
 	private EventBus eventBus;
 	
 	public MCBot(BotConfig config) {
-		
 		if (instance != null) {
 			return;
 		}
 		
+		Timer.time("core.init");
 		System.out.println("Initializing ...");
-		
 		this.config = config;
 		
 		// -- Initialize --
+		Timer.time("core.init.terminal.events");
 		terminal = new Terminal();
 		terminal.setPrompt(Terminal.colorize(AnsiColor.GREEN + "> " + AnsiColor.RESET));
 		terminal.setHistory(true);
@@ -74,44 +84,33 @@ public class MCBot {
 		});
 		
 		// Register CLI commands
+		Timer.time("core.init.terminal.commands");
 		terminal.registerCommand(new ExitCommand());
-		terminal.registerCommand(new VoiceCommand());
+		terminal.registerCommand(new HelpCommand());
 		terminal.registerCommand(new SayCommand());
 		terminal.registerCommand(new LoadCommand());
-		terminal.registerCommand(new MoveForwardCommand());
-		//terminal.registerCommand(new GotoCommand());
+		terminal.registerCommand(new MoveCommand());
 		terminal.registerCommand(new RotateCommand());
+		terminal.registerCommand(new GotoCommand());
 		
 		// Initialize the terminal
 		terminal.initialize();
 		terminal.print(Level.INFO, NAME + " v" + VERSION);
-		terminal.print(Level.INFO, "Type 'exit' to shutdown the bot.");
+		terminal.print(Level.INFO, Terminal.colorize("Type '&ehelp&r' for a list of commands, or type '&eexit&r' to shutdown the bot."));
 		instance = this;
 		running = true;
 		
 		
 		// ---- Initialize Components ----
+		Timer.time("core.init.components");
+		tasks = new PriorityQueue<Task>();
 		lua = new LuaSandbox();
 		player = new SelfPlayer(config.getUsername());
-		arduino = new ArduinoStatus();
-		arduino.setColor(0, 1, 0);
 		
-		try {
-			arduino.setColor(0, 1, 1);
-			Thread.sleep(100);
-			arduino.setColor(1, 0, 1);
-			Thread.sleep(100);
-			arduino.setColor(1, 1, 0);
-			Thread.sleep(100);
-			arduino.setColor(1, 1, 1);
-			Thread.sleep(100);
-			arduino.setColor(1, 0, 0);
-			Thread.sleep(100);
-			arduino.setColor(0, 0, 1);
-		} catch (InterruptedException e) {}
 		
-		arduino.setBlinkingColor(0, 128, 0, 400);
+		terminal.print(Level.INFO, "Friends: " + Arrays.toString(config.getFriends().toArray()));
 		
+		Timer.time("core.loop");
 		// ---- Loop ----
 		while (running) {
 			try {
@@ -131,10 +130,25 @@ public class MCBot {
 		
 		
 		// ---- Shutdown procedure ----
-		arduino.shutdown();
+		Timer.time("shutdown");
+		
+		// FIXME: temporary
+		System.out.println("+ PROFILER STATS");
+		System.out.println("| Name | Delta");
+		for (Profile p : Timer.getProfiles()) {
+			try {
+				System.out.println(String.format("| %s | %.2fms", p.getName(), Timer.getTimeInMillis(p.getName())));
+			} catch (InvalidNameException e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("+");
+		
+		//arduino.shutdown();
 		player.disconnect();
 		terminal.shutdown();
 		
+		//Thread.currentThread().interrupt();
 		System.exit(0);
 	}
 	
@@ -190,8 +204,6 @@ public class MCBot {
 	public synchronized final void shutdown() {
 		running = false;
 		terminal.print(Level.INFO, "Shutting down ...");
-		STTManager.setEnabled(false);
-		Thread.currentThread().interrupt();
 	}
 	
 	/**

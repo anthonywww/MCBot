@@ -6,13 +6,13 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.PriorityBlockingQueue;
 
+import com.github.anthonywww.mcbot.world.WorldPhysics;
 import com.github.anthonywww.mcbot.world.block.BlockLocation;
 import com.github.anthonywww.mcbot.world.pathfinding.BlockPathNode;
 import com.github.anthonywww.mcbot.world.pathfinding.Heuristic;
 import com.github.anthonywww.mcbot.world.pathfinding.PathNode;
 import com.github.anthonywww.mcbot.world.pathfinding.PathSearch;
 import com.github.anthonywww.mcbot.world.pathfinding.PathSearchProvider;
-import com.github.anthonywww.mcbot.world.pathfinding.WorldPhysics;
 
 public class AStarPathSearch implements PathSearch {
 	
@@ -37,8 +37,8 @@ public class AStarPathSearch implements PathSearch {
 		first = new BlockPathNode(this, start);
 		first.setCost(0);
 		first.setCostEstimate(heuristic.calculateCost(start, end));
-		openSet = new PriorityBlockingQueue<>(64, PATH_NODE_COMPARATOR);
-		closedSet = new PriorityBlockingQueue<>(64, PATH_NODE_COMPARATOR);
+		openSet = new PriorityBlockingQueue<PathNode>(64, PATH_NODE_COMPARATOR);
+		closedSet = new PriorityBlockingQueue<PathNode>(64, PATH_NODE_COMPARATOR);
 		nodeWorld.put(start, first);
 		openSet.offer(first);
 
@@ -46,8 +46,8 @@ public class AStarPathSearch implements PathSearch {
 		last = new BlockPathNode(this, end);
 		last.setCost(0);
 		last.setCostEstimate(heuristic.calculateCost(end, start));
-		openSetReverse = new PriorityBlockingQueue<>(64, PATH_NODE_COMPARATOR);
-		closedSetReverse = new PriorityBlockingQueue<>(64, PATH_NODE_COMPARATOR);
+		openSetReverse = new PriorityBlockingQueue<PathNode>(64, PATH_NODE_COMPARATOR);
+		closedSetReverse = new PriorityBlockingQueue<PathNode>(64, PATH_NODE_COMPARATOR);
 		nodeWorldReverse.put(end, last);
 		openSetReverse.offer(last);
 	}

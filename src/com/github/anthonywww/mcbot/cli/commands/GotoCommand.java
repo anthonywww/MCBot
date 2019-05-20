@@ -18,7 +18,8 @@ public class GotoCommand implements ICLICommand {
 				
 				MCBot.getInstance().log(Level.INFO, "Walking to [" + dx + ", " + dy + ", " + dz + "] ...");
 				
-				// TODO: Use path finding instead
+				// FIXME: Use path finding
+				
 				
 				return;
 			} catch (NumberFormatException e) {}

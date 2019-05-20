@@ -25,10 +25,7 @@ while optional parameters are denoted as **[optional]**.
 
 - `!say <message>` - Send *message* to the chat. This can be prefixed with a forward-slash (/) to issue a server command.
 - `!load <path>` - Load and execute a lua script.
-- `!forward [blocks]` - Walk *n* number of blocks forward relative to which way the bot is facing. If no parameter is provided, the default number of blocks is one.
-- `!left [blocks]` - Same as `!forward` but strafing to the left.
-- `!right [blocks]` - Same as `!forward` but strafing to the right.
-- `!backward [blocks]` - Same as `!forward` but walking backwards.
+- `!move forward [blocks]` - Walk *n* number of blocks forward relative to which way the bot is facing.
 - `!goto <player>` - Find *player* and walk to their coordinates.
 - `!goto <x> <y> <z>` - Go to the coordinates *x*, *y*, *z* in the world.
 
@@ -36,10 +33,11 @@ while optional parameters are denoted as **[optional]**.
 
 If you would like to automate the bot with pre-defined scripts,
 you can create a `script.lua` file in the same directory as the
-executable and pass in `--script script.lua script2.lua` to
+executable and pass in `--script script.lua` to
 automatically load and execute the scripts when the bot connects. Or
 you can issue the in game command `!load script.lua` which will
-load and execute a script on command.
+load and execute a script file on command. This can be done from
+sub-directories as well.
 
 An example script might look something like:
 
@@ -63,12 +61,45 @@ for i=1, i<4 do
 end
 ```
 
+## Lua Bot API
+
+All functions:
+
+| Lua Function             | Return Type | Description                                                                                    |
+|--------------------------|-------------|------------------------------------------------------------------------------------------------|
+| bot.sleep(num)           | nil         | Delay thread execution for *num* milliseconds. Must be a positive integer.                     |
+| bot.sendMessage(str)     | nil         | Send the string *str* to the chat.                                                             |
+| bot.rotate(yaw, pitch)   | nil         | Rotate the bot's absolute *yaw* and *pitch* in degrees. (Yaw -180 to 180, Pitch -90 to 90).    |
+| bot.rotateYaw(deg)       | nil         | Rotate the bot's yaw by *deg* degrees.                                                         |
+| bot.rotatePitch(deg)     | nil         | Rotate the bot's pitch by *deg* degrees.                                                       |
+| bot.moveForward(num)     | nil         | Move *num* blocks/meters forward, relative to the bot's current yaw angle.                     |
+| bot.moveBackward(num)    | nil         | Move *num* blocks/meters backward, relative to the bot's current yaw angle.                    |
+| bot.getHealth()          | float       | Get the current health. (Health 0.0 to 20.0).                                                  |
+| bot.getHunger()          | int         | Get the current hunger. (Hunger 0 to 20).                                                      |
+| bot.isDead()             | boolean     | Check if the current health is 0.0.                                                            |
+| bot.getPosition()        | table       | Get the position as a table {x=int, y=int, z=int}.                                             |
+| bot.getX()               | int         | Get the X position of the bot in the world.                                                    |
+| bot.getY()               | int         | Get the Y position of the bot in the world.                                                    |
+| bot.getZ()               | int         | Get the Z position of the bot in the world.                                                    |
+| bot.getRotation()        | table       | Get the rotation as a table {yaw=float, pitch=float}                                           |
+| bot.getYaw()             | float       | Get the Yaw rotation of the bot.                                                               |
+| bot.getPitch()           | float       | Get the Pitch rotation of the bot.                                                             |
+| bot.onMessage(func)      | nil         | Call a function *func(username, text)* with the username of the player and text of the player. |
+| bot.onRawMessage(func)   | nil         | Call a function *func(text)* with text being the raw message from chat.                        |
+| bot.onHealthChange(func) | nil         | Call a function *func(health, hunger)* with the health and hunger update.                      |
+
+
+
 ## Building and Launching
 
-This project can be compiled using `./build.sh` which requires Maven.
+This project can be compiled using `./build.sh` which requires Maven via bash.
 
-To run this project, simply execute `./launch.sh` after building the project.
+To run this project, simply execute `./launch.sh` after building the project in bash.
 
+
+## Authors
+- Anthony Waldsmith [awaldsmith0428@mpc.edu](mailto:awaldsmith0428@mpc.edu)
+- Wade Costa [wcosta0336@mpc.edu](mailto:wcosta0336@mpc.edu)
 
 ## License
 

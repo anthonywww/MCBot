@@ -3,8 +3,8 @@ package com.github.anthonywww.mcbot.event;
 import java.lang.reflect.Method;
 
 public final class MultiEventException extends Exception {
-	private static final long serialVersionUID = -1392819062389929428L;
-
+	
+	private static final long serialVersionUID = 1L;
 	private final EventException[] exceptions;
 
 	public MultiEventException(EventException... exceptions) {
@@ -22,8 +22,8 @@ public final class MultiEventException extends Exception {
 	}
 
 	public static final class EventException extends RuntimeException {
-		private static final long serialVersionUID = -910511146985345487L;
-
+		
+		private static final long serialVersionUID = 1L;
 		private final Event event;
 		private final EventListener listener;
 		private final Method method;

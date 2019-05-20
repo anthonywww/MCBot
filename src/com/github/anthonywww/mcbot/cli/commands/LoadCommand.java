@@ -13,14 +13,10 @@ public class LoadCommand implements ICLICommand {
 
 	private static final Logger logger = Logger.getLogger("");
 
-	public LoadCommand() {
-		
-	}
-
 	@Override
 	public void invoke(String[] params) {
 		if (params.length == 0) {
-			logger.info("load: Requires the path to the Lua script.");
+			logger.warning("load: Requires the path to the Lua script.");
 			return;
 		}
 

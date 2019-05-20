@@ -42,7 +42,11 @@ public final class BotConfig implements Runnable {
 		return logLevel;
 	}
 
-	@Option(names={"-l", "--level"}, description="Set the console log level (FINEST, FINER, FINE, INFO, WARNING, SEVERE).", arity="1", paramLabel="<logLevel>", type=Level.class)
+	@Option(names={"-l", "--level"}, description="Set the console log level (FINEST, FINER, FINE, INFO, WARNING, SEVERE).", arity="1", paramLabel="<logLevel>")
+	private void setLogLevel(String name) {
+		setLogLevel(Level.parse(name));
+	}
+	
 	public void setLogLevel(Level logLevel) {
 		this.logLevel = logLevel;
 	}
@@ -105,8 +109,8 @@ public final class BotConfig implements Runnable {
 	public List<String> getFriends() {
 		return friends;
 	}
-
-	@Option(names={"-f", "--friends"}, description="Set bot password (authenticate with Mojang).", arity="1..*", paramLabel="<friends>")
+	
+	@Option(names={"-f", "--friend"}, description="Set bot friend list.", arity="1..*", paramLabel="<friend>")
 	public void addFriend(String username) {
 		if (username.length() >= 30) {
 			final String err = "addFriend() must be less than 30 characters.";

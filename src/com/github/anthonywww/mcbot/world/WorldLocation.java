@@ -55,8 +55,9 @@ public class WorldLocation {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof WorldLocation))
+		if (!(obj instanceof WorldLocation)) {
 			return false;
+		}
 		WorldLocation location = (WorldLocation) obj;
 		return location.getX() == x && location.getY() == y && location.getZ() == z;
 	}

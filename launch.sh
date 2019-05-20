@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Initial memory heap
-INIT_MEM="1024m"
+INIT_MEM="512m"
 
 # Maximum memory heap
-MAX_MEM="1024m"
+MAX_MEM="512m"
 
 # Garbage collection threads
-GC_THREADS="8"
+GC_THREADS="2"
 
 # Jar file location
 JAR="target/MCBot.jar"

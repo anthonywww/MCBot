@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 final class EventSender {
+	
 	private final Map<EventListener, List<Method>> handlers;
 	private final Class<? extends Event> listenerEventClass;
 
@@ -45,7 +46,6 @@ final class EventSender {
 				continue;
 			for (Method method : methods) {
 				try {
-					@SuppressWarnings("deprecation")
 					boolean accessible = method.isAccessible();
 					if (!accessible)
 						method.setAccessible(true);

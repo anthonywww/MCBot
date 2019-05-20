@@ -1,11 +1,14 @@
 package com.github.anthonywww.mcbot.cli.commands;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.github.anthonywww.mcbot.MCBot;
 import com.github.anthonywww.mcbot.cli.ICLICommand;
 
 public class RotateCommand implements ICLICommand {
+	
+	private static final Logger logger = Logger.getLogger("");
 	
 	@Override
 	public void invoke(String[] params) {
@@ -34,9 +37,9 @@ public class RotateCommand implements ICLICommand {
 			} catch (NumberFormatException e) {}
 		}
 		
-		MCBot.getInstance().log(Level.INFO, "Usage: " + commandName() + " <yawInDegrees> <pitchInDegrees>");
-		MCBot.getInstance().log(Level.INFO, "Usage: " + commandName() + " yaw <degrees>");
-		MCBot.getInstance().log(Level.INFO, "Usage: " + commandName() + " pitch <degrees>");
+		logger.warning("Usage: " + commandName() + " <yawInDegrees> <pitchInDegrees>");
+		logger.warning("Usage: " + commandName() + " yaw <yawInDegrees>");
+		logger.warning("Usage: " + commandName() + " pitch <pitchInDegrees>");
 	}
 	
 	@Override

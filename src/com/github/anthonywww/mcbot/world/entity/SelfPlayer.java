@@ -1,15 +1,12 @@
 package com.github.anthonywww.mcbot.world.entity;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Proxy;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.joml.Math;
@@ -18,6 +15,7 @@ import org.joml.Vector3d;
 import com.github.anthonywww.mcbot.MCBot;
 import com.github.anthonywww.mcbot.Terminal;
 import com.github.anthonywww.mcbot.cli.AnsiColor;
+import com.github.anthonywww.mcbot.cli.ICLICommand;
 import com.github.steveice10.mc.auth.exception.request.InvalidCredentialsException;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
 import com.github.steveice10.mc.protocol.MinecraftConstants;
@@ -51,6 +49,7 @@ import com.github.steveice10.packetlib.tcp.TcpSessionFactory;
 
 public class SelfPlayer extends Player {
 
+	private static final Logger logger = Logger.getLogger("");
 	private Client client;
 
 	public SelfPlayer(String username) {
@@ -161,9 +160,6 @@ public class SelfPlayer extends Player {
 	
 	public void moveForward(double distance) {
 		final Vector3d vec = getUnitVector(Math.toRadians(getYaw()), Math.toRadians(getPitch()));
-		
-		MCBot.getInstance().log(Level.INFO, "Delta: " + vec.x*distance + ", " + vec.y*distance + ", " + vec.z*distance);
-		
 		move(vec.x*distance, vec.y*distance, vec.z*distance);
 	}
 	
@@ -190,10 +186,6 @@ public class SelfPlayer extends Player {
 		moveLeft(-distance);
 	}
 	
-	
-	
-	
-	
 	public void move(double dx, double dy, double dz) {
 		centerPosition();
 
@@ -207,7 +199,7 @@ public class SelfPlayer extends Player {
 			setY(getY() + sy);
 			setZ(getZ() + sz);// + (Math.random()/10000));
 
-			MCBot.getInstance().log(Level.INFO, "moving " + isOnGround() + " " + getX() + ", " + getY() + ", " + getZ() + " yaw=" + getYaw() + " pitch=" + getPitch());
+			logger.finest("moving " + isOnGround() + " " + getX() + ", " + getY() + ", " + getZ() + " yaw=" + getYaw() + " pitch=" + getPitch());
 			client.getSession().send(new ClientPlayerPositionRotationPacket(isOnGround(), getX(), getY(), getZ(), getYaw(), getPitch()));
 
 			try {
@@ -225,7 +217,7 @@ public class SelfPlayer extends Player {
 		statusClient.getSession().setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, new ServerInfoHandler() {
 			@Override
 			public void handle(Session session, ServerStatusInfo info) {
-				MCBot.getInstance().log(Level.INFO, "Version: " + info.getVersionInfo().getVersionName() + ", " + info.getVersionInfo().getProtocolVersion());
+				MCBot.getInstance().log(Level.INFO, "Server Version: " + info.getVersionInfo().getVersionName() + ", " + info.getVersionInfo().getProtocolVersion());
 				MCBot.getInstance().log(Level.INFO, "Player Count: " + info.getPlayerInfo().getOnlinePlayers() + " / " + info.getPlayerInfo().getMaxPlayers());
 				MCBot.getInstance().log(Level.FINER, "Players: " + Arrays.toString(info.getPlayerInfo().getPlayers()));
 				MCBot.getInstance().log(Level.FINER, "Description: " + info.getDescription().getFullText());
@@ -366,63 +358,54 @@ public class SelfPlayer extends Player {
 			// Chat message
 			else if (event.getPacket() instanceof ServerChatPacket) {
 				Message message = ((ServerChatPacket) event.getPacket()).getMessage();
-
+				
 				MCBot.getInstance().log(Level.INFO, "[chat] " + message.getFullText());
 
-				// TODO: Extract and parse player name and chat message
-				// TODO: Prevent bot from spamming itself
-				
-				
-				if (message.getFullText().contains("!exit")) {
-					disconnect();
-					MCBot.getInstance().shutdown();
-				}
-
-				if (message.getFullText().contains("!respawn")) {
-					event.getSession().send(new ClientRequestPacket(ClientRequest.RESPAWN));
+				if (message instanceof TranslationMessage) {
+					MCBot.getInstance().log(Level.FINEST, "Received Translation Components: " + Arrays.toString(((TranslationMessage) message).getTranslationParams()));
 				}
 				
-				if (message.getFullText().contains("!load ")) {
-					final String[] params = message.getFullText().split(Pattern.quote("!load "));
-					
-					if (params.length != 2) {
-						sendMessage("Syntax: load <filename>");
-					}
-					
-					File f = new File(params[1]);
-
-					if (f.exists() && f.isFile() && f.getName().endsWith(".lua")) {
-						try {
-							String src = readFileAsString(f);
-							sendMessage("Running " + f.getPath() + " ...");
-							MCBot.getInstance().getLua().runScriptInSandbox(f.getPath(), src);
-						} catch (IOException e) {
-							MCBot.getInstance().getTerminal().handleException(e);
-						}
-					} else {
-						sendMessage("Error: " + params[1] + " is not a lua script.");
+				String rawMessage = message.getFullText();
+				String username = null;
+				String text = "";
+				String textParts[] = rawMessage.split(" ");
+				
+				// Parse username from message (VANILLA)
+				if (textParts[0].startsWith("<") && textParts[0].endsWith(">")) {
+					username = textParts[0].substring(1, textParts[0].length()-1);
+				}
+				
+				for (int i=1; i<textParts.length; i++) {
+					text += textParts[i];
+					if (i != textParts.length-1) {
+						text += " ";
 					}
 				}
-
-				if (message.getFullText().contains("!rotate")) {
-					client.getSession().send(new ClientChatPacket("Rotating ..."));
-					Executors.newSingleThreadExecutor().submit(() -> {
-						for (float f = 0; f < 360.0F; f += 10.0F) {
-							setYaw(f);
-							event.getSession().send(new ClientPlayerRotationPacket(isOnGround(), getYaw(), getPitch()));
-							try {
-								Thread.sleep(50);
-							} catch (InterruptedException ex) {
-								System.err.println("Interrupted");
+				
+				text = text.trim();
+				
+				// Call chat callback method in lua sandbox
+				MCBot.getInstance().getLua().getLuaBot().rawChatCallback(text);
+				MCBot.getInstance().getLua().getLuaBot().chatCallback(username, text);
+				
+				// Built in commands
+				for (String friend : MCBot.getInstance().getConfig().getFriends()) {
+					if (username != null && username.equalsIgnoreCase(friend) && !username.equals(MCBot.getInstance().getConfig().getUsername())) {
+						if (text.startsWith("!")) {
+							for (ICLICommand command : MCBot.getInstance().getTerminal().getRegisteredCommands()) {
+								String[] texts = text.split(Pattern.quote(" "));
+								String textCmd = texts[0].substring(1);
+								String textArgs[] = Arrays.copyOfRange(texts, 1, texts.length);
+								System.out.println(textCmd);
+								if (command.commandName().equalsIgnoreCase(textCmd)) {
+									command.invoke(textArgs);
+									break;
+								}
 							}
 						}
-						client.getSession().send(new ClientChatPacket("Done!"));
-					});
+					}
 				}
-
-				else if (message instanceof TranslationMessage) {
-					MCBot.getInstance().log(Level.INFO, "Received Translation Components: " + Arrays.toString(((TranslationMessage) message).getTranslationParams()));
-				}
+				
 			}
 		}
 
@@ -447,17 +430,4 @@ public class SelfPlayer extends Player {
 	}
 	
 	
-	private static final String readFileAsString(File f) throws IOException {
-		StringBuffer fileData = new StringBuffer();
-		BufferedReader reader = new BufferedReader(new FileReader(f));
-		char[] buf = new char[1024];
-		int numRead = 0;
-		while ((numRead = reader.read(buf)) != -1) {
-			String readData = String.valueOf(buf, 0, numRead);
-			fileData.append(readData);
-		}
-		reader.close();
-		return fileData.toString();
-	}
-
 }

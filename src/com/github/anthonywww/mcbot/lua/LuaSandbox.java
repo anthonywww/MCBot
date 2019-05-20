@@ -13,6 +13,7 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.compiler.LuaC;
 import org.luaj.vm2.lib.Bit32Lib;
+import org.luaj.vm2.lib.CoroutineLib;
 import org.luaj.vm2.lib.DebugLib;
 import org.luaj.vm2.lib.PackageLib;
 import org.luaj.vm2.lib.StringLib;
@@ -25,21 +26,25 @@ import org.luaj.vm2.lib.jse.JseMathLib;
 import org.luaj.vm2.lib.jse.JseOsLib;
 
 import com.github.anthonywww.mcbot.MCBot;
+import com.github.anthonywww.mcbot.utils.Timer;
 
 public class LuaSandbox {
 
-	private static Logger logger = Logger.getLogger("");
+	private static final Logger logger = Logger.getLogger("");
 	private Globals globals;
+	private LuaBot luaBot;
 
 	public LuaSandbox() {
-		logger.fine("Loading Lua environment ...");
-		// Create server globals with just enough library support to compile user
-		// scripts.
+		logger.info("Loading Lua environment ...");
+		
+		Timer.time("lua.init");
+		luaBot = new LuaBot();
+		// Create server globals with just enough library support to compile user scripts.
 		globals = new Globals();
 		globals.load(new JseBaseLib());
 		globals.load(new PackageLib());
 		globals.load(new StringLib());
-		globals.load(new Bot());
+		globals.load(luaBot);
 
 		// To load scripts, we occasionally need a math library in addition to compiler
 		// support.
@@ -81,12 +86,18 @@ public class LuaSandbox {
 			})
 		);
 		
-		logger.fine("Lua environment is ready!");
+		Timer.time("lua.init.end");
+		logger.info("Lua environment is ready!");
+	}
+	
+	public LuaBot getLuaBot() {
+		return luaBot;
 	}
 	
 	public void runScriptInSandbox(String path, String script) {
 		
 		logger.fine("Loading Lua script: " + path + " ...");
+		Timer.time("lua.load");
 		// Each script will have it's own set of globals, which should
 		// prevent leakage between scripts running on the same server.
 		Globals user_globals = new Globals();
@@ -96,7 +107,7 @@ public class LuaSandbox {
 		user_globals.load(new TableLib());
 		user_globals.load(new StringLib());
 		user_globals.load(new JseMathLib());
-		user_globals.load(new Bot());
+		user_globals.load(luaBot);
 
 		// This library is dangerous as it gives unfettered access to the
 		// entire Java VM, so it's not suitable within this lightweight sandbox.
@@ -104,7 +115,7 @@ public class LuaSandbox {
 
 		// Starting coroutines in scripts will result in threads that are
 		// not under the server control, so this libary should probably remain out.
-		// user_globals.load(new CoroutineLib());
+		user_globals.load(new CoroutineLib());
 
 		// These are probably unwise and unnecessary for scripts on servers,
 		// although some date and time functions may be useful.
@@ -123,12 +134,14 @@ public class LuaSandbox {
 		user_globals.load(new DebugLib());
 		LuaValue sethook = user_globals.get("debug").get("sethook");
 		user_globals.set("debug", LuaValue.NIL);
+		Timer.time("lua.load.end");
 
 		// Set up the script to run in its own lua thread, which allows us
 		// to set a hook function that limits the script to a specific number of cycles.
 		// Note that the environment is set to the user globals, even though the
 		// compiling is done with the server globals.
 		try {
+			Timer.time("lua.exec");
 			logger.fine("Executing Lua script: " + path + " ...");
 			LuaValue chunk = globals.load(script, path, user_globals);
 			LuaThread thread = new LuaThread(user_globals, chunk);
@@ -162,10 +175,13 @@ public class LuaSandbox {
 			if (!result.tojstring().equals("true")) {
 				logger.warning("[lua] " + result.tojstring());
 			}
+			Timer.time("lua.exec.end");
 		} catch (LuaError e) {
 			logger.warning("[lua] " + e.getMessage());
 		}
 	}
+	
+	
 
 	/**
 	 * Simple read-only table whose contents are initialized from another table.

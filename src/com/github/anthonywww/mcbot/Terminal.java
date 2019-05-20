@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.logging.ConsoleHandler;
@@ -25,13 +25,12 @@ import java.util.logging.Logger;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Attribute;
 import org.fusesource.jansi.Ansi.Color;
+import org.fusesource.jansi.AnsiConsole;
 
 import com.github.anthonywww.mcbot.cli.AnsiColor;
 import com.github.anthonywww.mcbot.cli.ICLICommand;
 import com.github.anthonywww.mcbot.cli.ICLIEvent;
 import com.github.anthonywww.mcbot.cli.ICLIInvalidCommand;
-
-import org.fusesource.jansi.AnsiConsole;
 
 import jline.console.ConsoleReader;
 import jline.console.UserInterruptException;
@@ -52,7 +51,7 @@ public final class Terminal {
 	private List<ICLIEvent> registeredEvents;
 	private static Map<AnsiColor, String> replacements;
 	private ICLIInvalidCommand invalidCommandHandler;
-	private ExecutorService executor;
+	private Executor executor;
 
 	public Terminal() {
 		thread = new Thread(new ConsoleCommandThread());
@@ -64,7 +63,7 @@ public final class Terminal {
 		registeredCommands = new ArrayList<ICLICommand>();
 		registeredEvents = new ArrayList<ICLIEvent>();
 		invalidCommandHandler = null;
-		executor = Executors.newFixedThreadPool(2);
+		executor = Executors.newSingleThreadExecutor();
 
 		// Install ANSI Console
 		AnsiConsole.systemInstall();
@@ -159,7 +158,6 @@ public final class Terminal {
 		}
 
 		running = false;
-		executor.shutdownNow();
 
 		if (reader != null) {
 			try {

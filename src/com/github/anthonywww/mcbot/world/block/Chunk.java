@@ -12,15 +12,15 @@ public final class Chunk {
 	private final World world;
 	private final ChunkLocation location;
 	private final BlockLocation baseLocation;
-	private final byte[] blocks, metadata, light, skylight, biomes;
+	private final byte[] light, skylight, biomes;
+	private final Block[] blocks;
 	private final Map<BlockLocation, TileEntity> tileEntities;
 
-	public Chunk(World world, ChunkLocation location, byte[] blocks, byte[] metadata, byte[] light, byte[] skylight, byte[] biomes) {
+	public Chunk(World world, ChunkLocation location, Block[] blocks, byte[] light, byte[] skylight, byte[] biomes) {
 		this.world = world;
 		this.location = location;
 		this.baseLocation = new BlockLocation(location);
 		this.blocks = blocks;
-		this.metadata = metadata;
 		this.light = light;
 		this.skylight = skylight;
 		this.biomes = biomes;
@@ -61,26 +61,43 @@ public final class Chunk {
 
 	public int getBlockIdAt(int x, int y, int z) {
 		int index = y << 8 | z << 4 | x;
-		if (index < 0 || index > blocks.length)
+		if (index < 0 || index > blocks.length) {
 			return 0;
-		return blocks[index] & 0xFF;
+		}
+		return blocks[index].getType().getId() & 0xFF;
 	}
-
-	public void setBlockIdAt(int id, BlockLocation location) {
-		setBlockIdAt(id, location.getX(), location.getY(), location.getZ());
-	}
-
-	public void setBlockIdAt(int id, int x, int y, int z) {
+	
+	public String getBlockNameAt(int x, int y, int z) {
 		int index = y << 8 | z << 4 | x;
+		if (index < 0 || index > blocks.length) {
+			return null;
+		}
+		return blocks[index].getType().getName();
+	}
+
+	public void setBlockAt(BlockType blockType, int metadata, BlockLocation location) {
+		setBlockAt(blockType, metadata, location.getX(), location.getY(), location.getZ());
+	}
+	
+	public void setBlockAt(BlockType blockType, int metadata, int x, int y, int z) {
+		final int index = y << 8 | z << 4 | x;
 		if (index < 0 || index > blocks.length) {
 			return;
 		}
 		BlockLocation location = new BlockLocation((this.location.getX() * 16) + x, (this.location.getY() * 16) + y, (this.location.getZ() * 16) + z);
-		Block oldBlock = blocks[index] != 0 ? new Block(world, this, location, blocks[index], metadata[index]) : null;
-		blocks[index] = (byte) id;
-		Block newBlock = id != 0 ? new Block(world, this, location, id, metadata[index]) : null;
+		final Block oldBlock = blocks[index];
+		final Block newBlock = blockType.getId() != 0 ? new Block(world, this, location, blockType) : null;
+		blocks[index] = newBlock;
 		EventBus eventBus = MCBot.getInstance().getEventBus();
 		eventBus.fire(new BlockChangeEvent(world, location, oldBlock, newBlock));
+	}
+	
+	public Block getBlockAt(int x, int y, int z) {
+		int index = y << 8 | z << 4 | x;
+		if (index < 0 || index > blocks.length) {
+			return null;
+		}
+		return blocks[index];
 	}
 
 	public int getBlockMetadataAt(BlockLocation location) {
@@ -88,10 +105,10 @@ public final class Chunk {
 	}
 
 	public int getBlockMetadataAt(int x, int y, int z) {
-		int index = y << 8 | z << 4 | x;
-		if (index < 0 || index > metadata.length)
+		final int index = y << 8 | z << 4 | x;
+		if (index < 0 || index > blocks.length)
 			return 0;
-		return metadata[index] & 0xFF;
+		return blocks[index].getType().getMetadata();
 	}
 
 	public void setBlockMetadataAt(int metadata, BlockLocation location) {
@@ -99,14 +116,14 @@ public final class Chunk {
 	}
 
 	public void setBlockMetadataAt(int metadata, int x, int y, int z) {
-		int index = y << 8 | z << 4 | x;
-		if (index < 0 || index > this.metadata.length) {
+		final int index = y << 8 | z << 4 | x;
+		if (index < 0 || index > blocks.length) {
 			return;
 		}
 		BlockLocation location = new BlockLocation((this.location.getX() * 16) + x, (this.location.getY() * 16) + y, (this.location.getZ() * 16) + z);
-		Block oldBlock = new Block(world, this, location, blocks[index], this.metadata[index]);
-		this.metadata[index] = (byte) metadata;
-		Block newBlock = new Block(world, this, location, blocks[index], metadata);
+		Block oldBlock = blocks[index];
+		Block newBlock = new Block(world, this, location, blocks[index].getType());
+		
 		EventBus eventBus = MCBot.getInstance().getEventBus();
 		eventBus.fire(new BlockChangeEvent(world, location, oldBlock, newBlock));
 	}
