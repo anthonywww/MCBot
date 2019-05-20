@@ -16,6 +16,8 @@ import com.github.anthonywww.mcbot.MCBot;
 import com.github.anthonywww.mcbot.Terminal;
 import com.github.anthonywww.mcbot.cli.AnsiColor;
 import com.github.anthonywww.mcbot.cli.ICLICommand;
+import com.github.anthonywww.mcbot.utils.MathHelper;
+import com.github.anthonywww.mcbot.utils.Timer;
 import com.github.steveice10.mc.auth.exception.request.InvalidCredentialsException;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
 import com.github.steveice10.mc.protocol.MinecraftConstants;
@@ -31,6 +33,7 @@ import com.github.steveice10.mc.protocol.data.status.handler.ServerPingTimeHandl
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientRequestPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerAbilitiesPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerPositionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerPositionRotationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerRotationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientTeleportConfirmPacket;
@@ -70,7 +73,7 @@ public class SelfPlayer extends Player {
 		if (client != null) {
 			if (client.getSession() != null) {
 				if (client.getSession().isConnected()) {
-					MCBot.getInstance().log(Level.WARNING, "Already connected!");
+					logger.warning("Already connected!");
 					return;
 				}
 			}
@@ -85,9 +88,9 @@ public class SelfPlayer extends Player {
 		if (!password.isEmpty()) {
 			try {
 				protocol = new MinecraftProtocol(username, password);
-				MCBot.getInstance().log(Level.INFO, Terminal.colorize(AnsiColor.GREEN + "Successfully authenticated: " + AnsiColor.AQUA + username + AnsiColor.RESET));
+				logger.info(Terminal.colorize(AnsiColor.GREEN + "Successfully authenticated: " + AnsiColor.AQUA + username + AnsiColor.RESET));
 			} catch (InvalidCredentialsException e) {
-				MCBot.getInstance().log(Level.WARNING, "Invalid password!");
+				logger.warning("Invalid password!");
 				return;
 			} catch (RequestException e) {
 				MCBot.getInstance().getTerminal().handleException(e);
@@ -116,7 +119,7 @@ public class SelfPlayer extends Player {
 				if (client.getSession().isConnected()) {
 					client.getSession().send(new ClientChatPacket(message));
 				} else {
-					MCBot.getInstance().log(Level.WARNING, "Not connected to a server!");
+					logger.warning("Not connected to a server!");
 				}
 			}
 		}
@@ -132,22 +135,10 @@ public class SelfPlayer extends Player {
 
 					client.getSession().send(new ClientPlayerRotationPacket(isOnGround(), getYaw(), getPitch()));
 				} else {
-					MCBot.getInstance().log(Level.WARNING, "Not connected to a server!");
+					logger.warning("Not connected to a server!");
 				}
 			}
 		}
-	}
-	
-	public void centerPosition() {
-		final double dx = getX() > 0 ? Math.floor(getX()) + 0.5d : Math.round(getX()) - 0.5d;
-		final double dy = Math.floor(getY());
-		final double dz = getZ() > 0 ? Math.floor(getZ()) + 0.5d : Math.round(getZ()) - 0.5d;
-		
-		setX(dx);
-		setY(dy);
-		setZ(dz);
-		
-		client.getSession().send(new ClientPlayerPositionRotationPacket(isOnGround(), getX(), getY(), getZ(), getYaw(), getPitch()));
 	}
 	
 	private Vector3d getUnitVector(double angleYaw, double anglePitch) {
@@ -168,16 +159,8 @@ public class SelfPlayer extends Player {
 	}
 	
 	public void moveLeft(double distance) {
-		// FIXME: Wrap the yaw-angle 90 degrees and use the same trig functions to find the unit vector
 		double yaw = getYaw();
-		
-		if (yaw+90 > 180) {
-			double error = (180 - yaw+90);
-			yaw = -180 - error;
-		} else {
-			yaw = yaw + 90;
-		}
-		
+		yaw -= 90;
 		final Vector3d vec = getUnitVector(Math.toRadians(yaw), Math.toRadians(getPitch()));
 		move(vec.x*distance, vec.y*distance, vec.z*distance);
 	}
@@ -187,25 +170,29 @@ public class SelfPlayer extends Player {
 	}
 	
 	public void move(double dx, double dy, double dz) {
-		centerPosition();
-
-		int steps = (int) ((int) 2.0 * Math.floor(Math.sqrt(java.lang.Math.pow(dx, 2) + java.lang.Math.pow(dy, 2) + java.lang.Math.pow(dz, 2))));
+		logger.finest("dx=" + dx + " dy=" + dy + " dz=" + dz);
+		
+		int steps =  (int) (2.73f * (Math.sqrt(MathHelper.power(dx, 2) + MathHelper.power(dy, 2) + MathHelper.power(dz, 2))));
 		double sx = dx / steps;
 		double sy = dy / steps;
 		double sz = dz / steps;
 		
 		for (int i=0; i<steps; i++) {
-			setX(getX() + sx);// + (Math.random()/10000));
-			setY(getY() + sy);
-			setZ(getZ() + sz);// + (Math.random()/10000));
-
+			setX(getX() + sx);
+			//setY(getY() + sy);
+			setZ(getZ() + sz);
+			
 			logger.finest("moving " + isOnGround() + " " + getX() + ", " + getY() + ", " + getZ() + " yaw=" + getYaw() + " pitch=" + getPitch());
 			client.getSession().send(new ClientPlayerPositionRotationPacket(isOnGround(), getX(), getY(), getZ(), getYaw(), getPitch()));
-
+			
 			try {
 				Thread.sleep(80);
 			} catch (InterruptedException e) {}
 		}
+		
+		// FIXME: center the bot's position to the center of the block (0.5)
+		
+		
 	}
 
 	public static final void pingServer(String address, int port, Proxy proxy) {
@@ -217,31 +204,23 @@ public class SelfPlayer extends Player {
 		statusClient.getSession().setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, new ServerInfoHandler() {
 			@Override
 			public void handle(Session session, ServerStatusInfo info) {
-				MCBot.getInstance().log(Level.INFO, "Server Version: " + info.getVersionInfo().getVersionName() + ", " + info.getVersionInfo().getProtocolVersion());
-				MCBot.getInstance().log(Level.INFO, "Player Count: " + info.getPlayerInfo().getOnlinePlayers() + " / " + info.getPlayerInfo().getMaxPlayers());
-				MCBot.getInstance().log(Level.FINER, "Players: " + Arrays.toString(info.getPlayerInfo().getPlayers()));
-				MCBot.getInstance().log(Level.FINER, "Description: " + info.getDescription().getFullText());
-				MCBot.getInstance().log(Level.FINER, "Icon: " + info.getIcon());
+				logger.info("Server Version: " + info.getVersionInfo().getVersionName() + ", " + info.getVersionInfo().getProtocolVersion());
+				logger.info("Player Count: " + info.getPlayerInfo().getOnlinePlayers() + " / " + info.getPlayerInfo().getMaxPlayers());
+				logger.info("Players: " + Arrays.toString(info.getPlayerInfo().getPlayers()));
+				logger.info("Description: " + info.getDescription().getFullText());
+				logger.info("Icon: " + info.getIcon());
 			}
 		});
 		
 		statusClient.getSession().setFlag(MinecraftConstants.SERVER_PING_TIME_HANDLER_KEY, new ServerPingTimeHandler() {
 			@Override
 			public void handle(Session session, long pingTime) {
-				MCBot.getInstance().log(Level.INFO, "Response in: " + pingTime + "ms.");
+				logger.info("Response in: " + pingTime + "ms.");
 			}
 		});
 
 		statusClient.getSession().setConnectTimeout(3);
 		statusClient.getSession().connect(true);
-
-		while (statusClient.getSession().isConnected()) {
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				MCBot.getInstance().getTerminal().handleException(e);
-			}
-		}
 	}
 
 	private class ClientSessionAdapter extends SessionAdapter {
@@ -261,17 +240,20 @@ public class SelfPlayer extends Player {
 				setGamemode(packet.getGameMode());
 				setOnGround(true);
 
-				// TODO: add features
+				// TODO: add handlers
 				packet.getWorldType();
 				packet.getDifficulty();
 				packet.getDimension();
 				packet.getHardcore();
-
-				MCBot.getInstance().log(Level.INFO, Terminal.colorize(AnsiColor.GREEN + "Successfully connected to server." + AnsiColor.RESET));
+				packet.getMaxPlayers();
+				
+				logger.info(Terminal.colorize(AnsiColor.GREEN + "Successfully connected to server." + AnsiColor.RESET));
 
 				final String joinMessage = MCBot.getInstance().getConfig().getJoinMessage();
-				MCBot.getInstance().log(Level.INFO, "Sending join message: " + joinMessage);
-				event.getSession().send(new ClientChatPacket(joinMessage));
+				if (joinMessage != null && !joinMessage.isEmpty()) {
+					logger.info("Sending join message: " + joinMessage);
+					event.getSession().send(new ClientChatPacket(joinMessage));
+				}
 			}
 
 			// Server Player Abilities
@@ -290,14 +272,13 @@ public class SelfPlayer extends Player {
 			// Server Player Position Rotation
 			else if (event.getPacket() instanceof ServerPlayerPositionRotationPacket) {
 				ServerPlayerPositionRotationPacket packet = (ServerPlayerPositionRotationPacket) event.getPacket();
-
+				
 				setX(packet.getX());
 				setY(packet.getY());
 				setZ(packet.getZ());
 				setYaw(packet.getYaw());
 				setPitch(packet.getPitch());
 				
-				MCBot.getInstance().log(Level.INFO, "got new position: " + getX() + ", " + getY() + ", " + getZ() + " (tpid:" + packet.getTeleportId() + ") yaw=" + getYaw() + " pitch=" + getPitch());
 				event.getSession().send(new ClientTeleportConfirmPacket(packet.getTeleportId()));
 				event.getSession().send(new ClientPlayerPositionRotationPacket(isOnGround(), getX(), getY(), getZ(), getYaw(), getPitch()));
 			}
@@ -308,40 +289,19 @@ public class SelfPlayer extends Player {
 
 				MCBot.getInstance().log(Level.INFO, "[health] Hearts: " + health.getHealth() + " Food: " + health.getFood());
 
-				if (health.getFood() <= 4) {
-					event.getSession().send(new ClientChatPacket("I'm hungry"));
+				if (health.getHealth() <= 0.0) {
+					// Request respawn
+					event.getSession().send(new ClientRequestPacket(ClientRequest.RESPAWN));
 				}
-
-				if (health.getHealth() < getHealth()) {
-					if (health.getHealth() < 6.0F) {
-						event.getSession().send(new ClientChatPacket("I have critical health!"));
-
-						if (health.getHealth() == 0.0F) {
-							System.out.println("[DEATH] I died at " + getPosition());
-
-							try {
-								Thread.sleep(1000L);
-							} catch (InterruptedException e) {
-
-							}
-							event.getSession().send(new ClientRequestPacket(ClientRequest.RESPAWN));
-						}
-
-					} else {
-
-						final String[] messages = new String[] {
-							"Ouch!", "Ow!",
-							"Hey!", "That hurts!",
-							"That's not nice!"
-						};
-
-						final int i = new Random().nextInt(messages.length);
-						event.getSession().send(new ClientChatPacket(messages[i]));
-					}
-				}
-
+				
+				// Set local player health/food
 				setHealth(health.getHealth());
 				setFood(health.getFood());
+				
+				// Lua callback
+				Timer.time("lua.callback.health");
+				MCBot.getInstance().getLua().getLuaBot().healthCallback(getHealth(), getFood());
+				Timer.time("lua.callback.health.end");
 			}
 
 			// Spawn position
@@ -351,8 +311,7 @@ public class SelfPlayer extends Player {
 				setY(packet.getPosition().getY());
 				setZ(packet.getPosition().getZ());
 
-				// event.getSession().send(new ClientPlayerPositionPacket(bot.isOnGround(),
-				// bot.getX(), bot.getY(), bot.getZ()));
+				event.getSession().send(new ClientPlayerPositionPacket(isOnGround(), getX(), getY(), getZ()));
 			}
 
 			// Chat message
@@ -385,9 +344,13 @@ public class SelfPlayer extends Player {
 				text = text.trim();
 				
 				// Call chat callback method in lua sandbox
+				Timer.time("lua.callback.rawchat");
 				MCBot.getInstance().getLua().getLuaBot().rawChatCallback(text);
+				Timer.time("lua.callback.rawchat.end");
 				if (username != null) {
+					Timer.time("lua.callback.chat");
 					MCBot.getInstance().getLua().getLuaBot().chatCallback(username, text);
+					Timer.time("lua.callback.chat.end");
 				}
 				
 				// Built in commands
@@ -397,12 +360,11 @@ public class SelfPlayer extends Player {
 						friend = username;
 					}
 					if (username != null && username.equalsIgnoreCase(friend) && !username.equals(MCBot.getInstance().getConfig().getUsername())) {
-						if (text.startsWith("!")) {
+						if (text.startsWith(MCBot.getInstance().getConfig().getPrefix())) {
 							for (ICLICommand command : MCBot.getInstance().getTerminal().getRegisteredCommands()) {
 								String[] texts = text.split(Pattern.quote(" "));
 								String textCmd = texts[0].substring(1);
 								String textArgs[] = Arrays.copyOfRange(texts, 1, texts.length);
-								System.out.println(textCmd);
 								if (command.commandName().equalsIgnoreCase(textCmd)) {
 									command.invoke(textArgs);
 									break;
