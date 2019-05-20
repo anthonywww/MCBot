@@ -17,7 +17,7 @@ public class MoveCommand implements ICLICommand {
 		}
 		
 		try {
-			int units = Integer.parseInt(params[1]);
+			final double units = Double.parseDouble(params[1]);
 			
 			switch (params[0].toLowerCase()) {
 			case "forward":
@@ -39,7 +39,7 @@ public class MoveCommand implements ICLICommand {
 			
 			logger.info(String.format("Moved bot %s %s units.", params[0], params[1]));
 		} catch (NumberFormatException e) {
-			logger.warning("Usage: " + commandName() + " <direction> <units>. Units must be an integer");
+			logger.warning("Usage: " + commandName() + " <direction> <units>. Units must be a number");
 		}
 	}
 	

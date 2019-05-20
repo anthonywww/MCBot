@@ -78,9 +78,9 @@ All functions:
 | bot.getHunger()          | int         | Get the current hunger. (Hunger 0 to 20).                                                      |
 | bot.isDead()             | boolean     | Check if the current health is 0.0.                                                            |
 | bot.getPosition()        | table       | Get the position as a table {x=int, y=int, z=int}.                                             |
-| bot.getX()               | int         | Get the X position of the bot in the world.                                                    |
-| bot.getY()               | int         | Get the Y position of the bot in the world.                                                    |
-| bot.getZ()               | int         | Get the Z position of the bot in the world.                                                    |
+| bot.getX()               | float       | Get the X position of the bot in the world.                                                    |
+| bot.getY()               | float       | Get the Y position of the bot in the world.                                                    |
+| bot.getZ()               | float       | Get the Z position of the bot in the world.                                                    |
 | bot.getRotation()        | table       | Get the rotation as a table {yaw=float, pitch=float}                                           |
 | bot.getYaw()             | float       | Get the Yaw rotation of the bot.                                                               |
 | bot.getPitch()           | float       | Get the Pitch rotation of the bot.                                                             |
