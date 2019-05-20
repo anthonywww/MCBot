@@ -392,6 +392,10 @@ public class SelfPlayer extends Player {
 				
 				// Built in commands
 				for (String friend : MCBot.getInstance().getConfig().getFriends()) {
+					// Allow all players access
+					if (friend.equals("*")) {
+						friend = username;
+					}
 					if (username != null && username.equalsIgnoreCase(friend) && !username.equals(MCBot.getInstance().getConfig().getUsername())) {
 						if (text.startsWith("!")) {
 							for (ICLICommand command : MCBot.getInstance().getTerminal().getRegisteredCommands()) {
