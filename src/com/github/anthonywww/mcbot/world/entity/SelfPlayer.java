@@ -3,8 +3,6 @@ package com.github.anthonywww.mcbot.world.entity;
 import java.net.ConnectException;
 import java.net.Proxy;
 import java.util.Arrays;
-import java.util.Random;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -18,13 +16,16 @@ import com.github.anthonywww.mcbot.cli.AnsiColor;
 import com.github.anthonywww.mcbot.cli.ICLICommand;
 import com.github.anthonywww.mcbot.utils.MathHelper;
 import com.github.anthonywww.mcbot.utils.Timer;
+import com.github.anthonywww.mcbot.world.World;
 import com.github.steveice10.mc.auth.exception.request.InvalidCredentialsException;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
 import com.github.steveice10.mc.protocol.MinecraftConstants;
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.data.SubProtocol;
 import com.github.steveice10.mc.protocol.data.game.ClientRequest;
+import com.github.steveice10.mc.protocol.data.game.chunk.Chunk;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
+import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
 import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.mc.protocol.data.message.TranslationMessage;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
@@ -42,7 +43,9 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePack
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerAbilitiesPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerHealthPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerChunkDataPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerSpawnPositionPacket;
+import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
@@ -54,6 +57,7 @@ public class SelfPlayer extends Player {
 
 	private static final Logger logger = Logger.getLogger("");
 	private Client client;
+	private World world;
 
 	public SelfPlayer(String username) {
 		super(username);
@@ -314,6 +318,36 @@ public class SelfPlayer extends Player {
 				event.getSession().send(new ClientPlayerPositionPacket(isOnGround(), getX(), getY(), getZ()));
 			}
 
+			
+			// Chunk handling
+			else if (event.getPacket() instanceof ServerChunkDataPacket) {
+				ServerChunkDataPacket packet = (ServerChunkDataPacket) event.getPacket();
+				final Chunk[] chunks = packet.getColumn().getChunks();
+				final int[] biomes = packet.getColumn().getBiomeData();
+				final int chunkX = packet.getColumn().getX();
+				final int chunkZ = packet.getColumn().getZ();
+				final CompoundTag[] tileEntities = packet.getColumn().getTileEntities();
+				
+				
+				
+				
+				for (Chunk c : chunks) {
+					if (c != null) {
+						for (BlockState s : c.getBlocks().getStates()) {
+							if (s != null) {
+								int x = 0;
+								int y = 0;
+								int z = 0;
+								logger.fine("BlockState: " + s.toString() + " ");
+							}
+						}
+					}
+				}
+				
+				logger.fine(String.format("Chunk Data Packet: %d %d: %s %s %s", chunkX, chunkZ, Arrays.toString(chunks), Arrays.toString(biomes), Arrays.toString(tileEntities)));
+			}
+			
+			
 			// Chat message
 			else if (event.getPacket() instanceof ServerChatPacket) {
 				Message message = ((ServerChatPacket) event.getPacket()).getMessage();

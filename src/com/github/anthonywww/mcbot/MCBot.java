@@ -110,6 +110,9 @@ public class MCBot {
 		
 		terminal.print(Level.INFO, "Friends: " + Arrays.toString(config.getFriends().toArray()));
 		
+		// TODO: Load blocks from resources/assets/blocks.json
+		// TODO: Load blocks from resources/assets/items.json
+		
 		Timer.time("core.loop");
 		// ---- Loop ----
 		while (running) {
