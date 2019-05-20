@@ -96,7 +96,7 @@ public class MCBot {
 		// Initialize the terminal
 		terminal.initialize();
 		terminal.print(Level.INFO, NAME + " v" + VERSION);
-		terminal.print(Level.INFO, Terminal.colorize("Type '&ehelp&r' for a list of commands, or type '&eexit&r' to shutdown the bot."));
+		terminal.print(Level.INFO, Terminal.colorize("Type '§ehelp§r' for a list of commands, or type '§eexit§r' to shutdown the bot."));
 		instance = this;
 		running = true;
 		

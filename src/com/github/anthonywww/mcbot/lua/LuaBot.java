@@ -52,6 +52,14 @@ public class LuaBot extends TwoArgFunction {
 		bot.set("getRotation", new get_rotation());
 		bot.set("getYaw", new get_rotation_yaw());
 		bot.set("getPitch", new get_rotation_pitch());
+		// TODO: canMoveForward()
+		// TODO: canMoveBackward()
+		// TODO: canMoveLeft()
+		// TODO: canMoveRight()
+		// TODO: canJump()
+		// TODO: isFalling()
+		// TODO: isInLiquid()
+		// TODO: getBlockAt(x, y, z)
 		
 		LuaTable mt = LuaValue.tableOf(new LuaValue[] { INDEX, bot });
 		env.set("bot", bot);

@@ -16,14 +16,14 @@ public class HelpCommand implements ICLICommand {
 			for (ICLICommand c : MCBot.getInstance().getTerminal().getRegisteredCommands()) {
 				if (c.commandName().equalsIgnoreCase(params[1])) {
 					logger.info("---- Help for '" + c.commandName() + "' ----");
-					logger.info(String.format(Terminal.colorize("&a%s&r  -  &6%s&r"), c.commandName(), c.commandDescription()));	
+					logger.info(String.format(Terminal.colorize("§a%s§r  -  §6%s§r"), c.commandName(), c.commandDescription()));	
 				}
 			}
 			return;
 		}
 		logger.info("---- Help Commands ----");
 		for (ICLICommand c : MCBot.getInstance().getTerminal().getRegisteredCommands()) {
-			logger.info(String.format(Terminal.colorize("&a%s&r  -  &6%s&r"), c.commandName(), c.commandDescription()));
+			logger.info(String.format(Terminal.colorize("§a%s§r  -  §6%s§r"), c.commandName(), c.commandDescription()));
 		}
 	}
 

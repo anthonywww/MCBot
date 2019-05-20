@@ -386,7 +386,9 @@ public class SelfPlayer extends Player {
 				
 				// Call chat callback method in lua sandbox
 				MCBot.getInstance().getLua().getLuaBot().rawChatCallback(text);
-				MCBot.getInstance().getLua().getLuaBot().chatCallback(username, text);
+				if (username != null) {
+					MCBot.getInstance().getLua().getLuaBot().chatCallback(username, text);
+				}
 				
 				// Built in commands
 				for (String friend : MCBot.getInstance().getConfig().getFriends()) {
