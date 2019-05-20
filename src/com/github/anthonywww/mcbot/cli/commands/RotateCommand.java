@@ -1,6 +1,5 @@
 package com.github.anthonywww.mcbot.cli.commands;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.github.anthonywww.mcbot.MCBot;
@@ -20,18 +19,21 @@ public class RotateCommand implements ICLICommand {
 					float pitch = MCBot.getInstance().getPlayer().getPitch();
 					
 					MCBot.getInstance().getPlayer().sendRotate(yaw, pitch);
+					logger.info(String.format("Rotated bot yaw %.2f degrees.", yaw));
 					return;
 				} else if (params[0].equalsIgnoreCase("pitch")) {
 					float yaw = MCBot.getInstance().getPlayer().getYaw();
 					float pitch = Float.parseFloat(params[1]);
 					
 					MCBot.getInstance().getPlayer().sendRotate(yaw, pitch);
+					logger.info(String.format("Rotated bot pitch %.2f degrees.", pitch));
 					return;
 				} else {
 					float yaw = Float.parseFloat(params[0]);
 					float pitch = Float.parseFloat(params[1]);
 					
 					MCBot.getInstance().getPlayer().sendRotate(yaw, pitch);
+					logger.info(String.format("Rotated bot yaw %.2f degrees & pitch %.2f degrees.", yaw, pitch));
 					return;
 				}
 			} catch (NumberFormatException e) {}
