@@ -23,7 +23,7 @@ public class BlockRegistry {
 		 BlockType type = BlockType.getByName(name.substring(10));
 		 
 		 if (type == BlockType.UNDEFINED) {
-			 logger.warning(String.format("[Block Registry] BlockState '%s' could not be matched with a BlockType.", name));
+			 logger.warning(String.format("[Block Registry] BlockState '%s' could not be matched with a BlockType.", name.substring(10)));
 		 }
 		 
 		 logger.info(type.getName() + ": " + name + " " + defaultState + " " + Arrays.toString(blockStates));
