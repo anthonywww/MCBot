@@ -14,6 +14,7 @@ import com.github.anthonywww.mcbot.cli.AnsiColor;
 import com.github.anthonywww.mcbot.cli.ICLICommand;
 import com.github.anthonywww.mcbot.cli.ICLIEvent;
 import com.github.anthonywww.mcbot.cli.ICLIInvalidCommand;
+import com.github.anthonywww.mcbot.cli.commands.ChunkCommand;
 import com.github.anthonywww.mcbot.cli.commands.ExitCommand;
 import com.github.anthonywww.mcbot.cli.commands.FriendsCommand;
 import com.github.anthonywww.mcbot.cli.commands.GotoCommand;
@@ -22,6 +23,7 @@ import com.github.anthonywww.mcbot.cli.commands.HelpCommand;
 import com.github.anthonywww.mcbot.cli.commands.InventoryCommand;
 import com.github.anthonywww.mcbot.cli.commands.LoadCommand;
 import com.github.anthonywww.mcbot.cli.commands.MoveCommand;
+import com.github.anthonywww.mcbot.cli.commands.PositionCommand;
 import com.github.anthonywww.mcbot.cli.commands.RotateCommand;
 import com.github.anthonywww.mcbot.cli.commands.SayCommand;
 import com.github.anthonywww.mcbot.event.EventBus;
@@ -110,6 +112,8 @@ public class MCBot {
 		terminal.registerCommand(new FriendsCommand());
 		terminal.registerCommand(new HealthCommand());
 		terminal.registerCommand(new InventoryCommand());
+		terminal.registerCommand(new ChunkCommand());
+		terminal.registerCommand(new PositionCommand());
 		
 		
 		// Initialize the terminal

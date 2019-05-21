@@ -16,7 +16,6 @@ import com.github.anthonywww.mcbot.cli.AnsiColor;
 import com.github.anthonywww.mcbot.cli.ICLICommand;
 import com.github.anthonywww.mcbot.utils.MathHelper;
 import com.github.anthonywww.mcbot.utils.Timer;
-import com.github.anthonywww.mcbot.world.World;
 import com.github.steveice10.mc.auth.exception.request.InvalidCredentialsException;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
 import com.github.steveice10.mc.protocol.MinecraftConstants;
@@ -57,7 +56,6 @@ public class SelfPlayer extends Player {
 
 	private static final Logger logger = Logger.getLogger("");
 	private Client client;
-	private World world;
 
 	public SelfPlayer(String username) {
 		super(username);
