@@ -463,19 +463,19 @@ public final class Terminal {
 			
 			if (color) {
 				if (record.getLevel().intValue() <= Level.CONFIG.intValue()) {
-					builder.append("§9");
+					builder.append(AnsiColor.BLUE);
 				} else if (record.getLevel().intValue() == Level.INFO.intValue()) {
-					// builder.append("§e");
+					// builder.append(AnsiColor.YELLOW);
 				} else if (record.getLevel().intValue() == Level.WARNING.intValue()) {
-					builder.append("§e");
+					builder.append(AnsiColor.YELLOW);
 				} else if (record.getLevel().intValue() >= Level.SEVERE.intValue()) {
-					builder.append("§c");
+					builder.append(AnsiColor.RED);
 				}
 			}
 
 			builder.append('[');
 			builder.append(record.getLevel().getLocalizedName().toUpperCase());
-			builder.append("]§r ");
+			builder.append("]" + AnsiColor.RESET + " ");
 
 			if (color) {
 				builder.append(colorize(AnsiColor.RESET + formatMessage(record) + AnsiColor.RESET));

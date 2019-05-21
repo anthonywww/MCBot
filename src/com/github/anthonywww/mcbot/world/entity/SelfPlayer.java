@@ -230,7 +230,6 @@ public class SelfPlayer extends Player {
 	private class ClientSessionAdapter extends SessionAdapter {
 
 		protected ClientSessionAdapter() {
-
 		}
 
 		@Override
@@ -290,11 +289,9 @@ public class SelfPlayer extends Player {
 			// Update health record
 			else if (event.getPacket() instanceof ServerPlayerHealthPacket) {
 				ServerPlayerHealthPacket health = (ServerPlayerHealthPacket) event.getPacket();
-
-				MCBot.getInstance().log(Level.INFO, "[health] Hearts: " + health.getHealth() + " Food: " + health.getFood());
-
+				
 				if (health.getHealth() <= 0.0) {
-					// Request respawn
+					// Request respawn on death
 					event.getSession().send(new ClientRequestPacket(ClientRequest.RESPAWN));
 				}
 				
@@ -328,9 +325,6 @@ public class SelfPlayer extends Player {
 				final int chunkZ = packet.getColumn().getZ();
 				final CompoundTag[] tileEntities = packet.getColumn().getTileEntities();
 				
-				
-				
-				
 				for (Chunk c : chunks) {
 					if (c != null) {
 						for (BlockState s : c.getBlocks().getStates()) {
@@ -338,13 +332,13 @@ public class SelfPlayer extends Player {
 								int x = 0;
 								int y = 0;
 								int z = 0;
-								logger.fine("BlockState: " + s.toString() + " ");
+								//logger.fine("BlockState: " + s.toString() + " ");
 							}
 						}
 					}
 				}
 				
-				logger.fine(String.format("Chunk Data Packet: %d %d: %s %s %s", chunkX, chunkZ, Arrays.toString(chunks), Arrays.toString(biomes), Arrays.toString(tileEntities)));
+				//logger.fine(String.format("Chunk Data Packet: %d %d: %s %s %s", chunkX, chunkZ, Arrays.toString(chunks), Arrays.toString(biomes), Arrays.toString(tileEntities)));
 			}
 			
 			
