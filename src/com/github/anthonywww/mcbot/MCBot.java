@@ -130,20 +130,19 @@ public class MCBot {
 		lua = new LuaSandbox();
 		player = new SelfPlayer(config.getUsername());
 		
+		terminal.print(Level.FINE, "Friends: " + Arrays.toString(config.getFriends().toArray()));
 		
-		terminal.print(Level.INFO, "Friends: " + Arrays.toString(config.getFriends().toArray()));
+		JsonParser parser = new JsonParser();
 		
 		// TODO: Load blocks from resources/assets/blocks.json
-		// TODO: Load blocks from resources/assets/items.json
-		JsonParser parser = new JsonParser();
-		JsonElement element = parser.parse(FileHelper.readAsset("blocks.json"));
-		
-		for (Entry<String, JsonElement> jsonBlock : element.getAsJsonObject().entrySet()) {
+		JsonElement blockElements = parser.parse(FileHelper.readAsset("blocks.json"));
+
+		for (Entry<String, JsonElement> jsonBlock : blockElements.getAsJsonObject().entrySet()) {
 			String name = jsonBlock.getKey();
 			JsonArray states = jsonBlock.getValue().getAsJsonObject().get("states").getAsJsonArray();
 			int defaultState = -1;
 			int[] blockStates = new int[states.size()];
-			for (int i=0; i<states.size(); i++) {
+			for (int i = 0; i < states.size(); i++) {
 				int stateId = states.get(i).getAsJsonObject().get("id").getAsInt();
 				blockStates[i] = stateId;
 				if (states.get(i).getAsJsonObject().has("default")) {
@@ -152,6 +151,25 @@ public class MCBot {
 			}
 			blockRegistry.add(name, defaultState, blockStates);
 		}
+		
+		
+		// TODO: Load items from resources/assets/items.json
+//		JsonElement itemElements = parser.parse(FileHelper.readAsset("items.json"));
+//		
+//		for (Entry<String, JsonElement> jsonBlock : itemElements.getAsJsonObject().entrySet()) {
+//			String name = jsonBlock.getKey();
+//			JsonArray states = jsonBlock.getValue().getAsJsonObject().get("states").getAsJsonArray();
+//			int defaultState = -1;
+//			int[] blockStates = new int[states.size()];
+//			for (int i=0; i<states.size(); i++) {
+//				int stateId = states.get(i).getAsJsonObject().get("id").getAsInt();
+//				blockStates[i] = stateId;
+//				if (states.get(i).getAsJsonObject().has("default")) {
+//					defaultState = stateId;
+//				}
+//			}
+//			blockRegistry.add(name, defaultState, blockStates);
+//		}
 		
 		
 		
@@ -240,6 +258,13 @@ public class MCBot {
 		return lua;
 	}
 	
+	/**
+	 * Get the block registry
+	 * @return
+	 */
+	public BlockRegistry getBlockRegistry() {
+		return blockRegistry;
+	}
 	
 	public EventBus getEventBus() {
 		return eventBus;
