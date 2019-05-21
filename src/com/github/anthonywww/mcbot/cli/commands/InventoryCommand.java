@@ -11,12 +11,13 @@ public class InventoryCommand implements ICLICommand {
 	@Override
 	public void invoke(String[] params) {
 		
+		
 		logger.warning("Usage: " + commandName() + "");
 	}
 	
 	@Override
 	public String commandName() {
-		return "inv";
+		return "inventory";
 	}
 	
 	@Override

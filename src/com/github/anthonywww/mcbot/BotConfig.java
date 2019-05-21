@@ -119,6 +119,12 @@ public final class BotConfig implements Runnable {
 		}
 		this.friends.add(username.trim());
 	}
+	
+	public void removeFriend(String username) {
+		if (friends.contains(username)) {
+			friends.remove(username);
+		}
+	}
 
 	public String getJoinMessage() {
 		return joinMessage;

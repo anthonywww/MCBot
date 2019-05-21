@@ -3,6 +3,7 @@ package com.github.anthonywww.mcbot;
 import java.net.ConnectException;
 import java.net.Proxy;
 import java.util.Arrays;
+import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.logging.Level;
@@ -14,8 +15,11 @@ import com.github.anthonywww.mcbot.cli.ICLICommand;
 import com.github.anthonywww.mcbot.cli.ICLIEvent;
 import com.github.anthonywww.mcbot.cli.ICLIInvalidCommand;
 import com.github.anthonywww.mcbot.cli.commands.ExitCommand;
+import com.github.anthonywww.mcbot.cli.commands.FriendsCommand;
 import com.github.anthonywww.mcbot.cli.commands.GotoCommand;
+import com.github.anthonywww.mcbot.cli.commands.HealthCommand;
 import com.github.anthonywww.mcbot.cli.commands.HelpCommand;
+import com.github.anthonywww.mcbot.cli.commands.InventoryCommand;
 import com.github.anthonywww.mcbot.cli.commands.LoadCommand;
 import com.github.anthonywww.mcbot.cli.commands.MoveCommand;
 import com.github.anthonywww.mcbot.cli.commands.RotateCommand;
@@ -23,9 +27,14 @@ import com.github.anthonywww.mcbot.cli.commands.SayCommand;
 import com.github.anthonywww.mcbot.event.EventBus;
 import com.github.anthonywww.mcbot.lua.LuaSandbox;
 import com.github.anthonywww.mcbot.task.Task;
+import com.github.anthonywww.mcbot.utils.FileHelper;
 import com.github.anthonywww.mcbot.utils.Timer;
 import com.github.anthonywww.mcbot.utils.Timer.Profile;
+import com.github.anthonywww.mcbot.world.block.BlockRegistry;
 import com.github.anthonywww.mcbot.world.entity.SelfPlayer;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 public class MCBot {
 	
@@ -42,6 +51,9 @@ public class MCBot {
 	private Queue<Task> tasks;
 	private EventBus eventBus;
 	
+	private BlockRegistry blockRegistry;
+	
+	
 	public MCBot(BotConfig config) {
 		if (instance != null) {
 			return;
@@ -50,6 +62,9 @@ public class MCBot {
 		Timer.time("core.init");
 		System.out.println("Initializing ...");
 		this.config = config;
+		
+		blockRegistry = new BlockRegistry();
+		
 		
 		// -- Initialize --
 		Timer.time("core.init.terminal.events");
@@ -92,11 +107,15 @@ public class MCBot {
 		terminal.registerCommand(new MoveCommand());
 		terminal.registerCommand(new RotateCommand());
 		terminal.registerCommand(new GotoCommand());
+		terminal.registerCommand(new FriendsCommand());
+		terminal.registerCommand(new HealthCommand());
+		terminal.registerCommand(new InventoryCommand());
+		
 		
 		// Initialize the terminal
 		terminal.initialize();
 		terminal.print(Level.INFO, NAME + " v" + VERSION);
-		terminal.print(Level.INFO, Terminal.colorize("Type '§ehelp§r' for a list of commands, or type '§eexit§r' to shutdown the bot."));
+		terminal.print(Level.INFO, Terminal.colorize("Type '" + AnsiColor.YELLOW + "help" + AnsiColor.RESET + "' for a list of commands, or type '" + AnsiColor.YELLOW + "exit" + AnsiColor.RESET + "' to shutdown the bot."));
 		instance = this;
 		running = true;
 		
@@ -112,6 +131,27 @@ public class MCBot {
 		
 		// TODO: Load blocks from resources/assets/blocks.json
 		// TODO: Load blocks from resources/assets/items.json
+		JsonParser parser = new JsonParser();
+		JsonElement element = parser.parse(FileHelper.readAsset("blocks.json"));
+		
+		for (Entry<String, JsonElement> jsonBlock : element.getAsJsonObject().entrySet()) {
+			String name = jsonBlock.getKey();
+			JsonArray states = jsonBlock.getValue().getAsJsonObject().get("states").getAsJsonArray();
+			int defaultState = -1;
+			int[] blockStates = new int[states.size()];
+			for (int i=0; i<states.size(); i++) {
+				int stateId = states.get(i).getAsJsonObject().get("id").getAsInt();
+				blockStates[i] = stateId;
+				if (states.get(i).getAsJsonObject().has("default")) {
+					defaultState = stateId;
+				}
+			}
+			blockRegistry.add(name, defaultState, blockStates);
+		}
+		
+		
+		
+		
 		
 		Timer.time("core.loop");
 		// ---- Loop ----
