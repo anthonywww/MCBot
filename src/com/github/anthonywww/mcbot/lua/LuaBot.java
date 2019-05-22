@@ -52,6 +52,7 @@ public class LuaBot extends TwoArgFunction {
 		bot.set("getRotation", new get_rotation());
 		bot.set("getYaw", new get_rotation_yaw());
 		bot.set("getPitch", new get_rotation_pitch());
+		bot.set("getUsername", new get_username());
 		// TODO: canMoveForward()
 		// TODO: canMoveBackward()
 		// TODO: canMoveLeft()
@@ -91,6 +92,13 @@ public class LuaBot extends TwoArgFunction {
 			}
 
 			return LuaValue.NIL;
+		}
+	}
+	
+	class get_username extends ZeroArgFunction {
+		@Override
+		public LuaValue call() {
+			return LuaValue.valueOf(MCBot.getInstance().getConfig().getUsername());
 		}
 	}
 	
@@ -267,10 +275,11 @@ public class LuaBot extends TwoArgFunction {
 	class raw_chat_callback extends OneArgFunction {
 		@Override
 		public LuaValue call(LuaValue func) {
+			if (func.isnil()) {
+				rawChatCallback = null;
+				return LuaValue.NIL;
+			}
 			LuaFunction f = func.checkfunction();
-			// bot.handleMessage(function(username, message)
-			// 
-			//end)
 			rawChatCallback = f;
 			return LuaValue.NIL;
 		}
@@ -279,6 +288,10 @@ public class LuaBot extends TwoArgFunction {
 	class chat_callback extends OneArgFunction {
 		@Override
 		public LuaValue call(LuaValue func) {
+			if (func.isnil()) {
+				chatCallback = null;
+				return LuaValue.NIL;
+			}
 			LuaFunction f = func.checkfunction();
 			chatCallback = f;
 			return LuaValue.NIL;
@@ -313,7 +326,7 @@ public class LuaBot extends TwoArgFunction {
 	 * @param username
 	 * @param msg
 	 */
-	public void chatCallback(String username, String msg) {
+	public synchronized void chatCallback(String username, String msg) {
 		if (chatCallback != null && !chatCallback.isnil()) {
 			luaExecutor.execute(() -> {
 				chatCallback.call(LuaValue.valueOf(username), LuaValue.valueOf(msg));
@@ -326,8 +339,8 @@ public class LuaBot extends TwoArgFunction {
 	 * @param username
 	 * @param msg
 	 */
-	public void healthCallback(float health, int food) {
-		if (chatCallback != null && !chatCallback.isnil()) {
+	public synchronized void healthCallback(float health, int food) {
+		if (healthCallback != null && !healthCallback.isnil()) {
 			luaExecutor.execute(() -> {
 				healthCallback.call(LuaValue.valueOf(health), LuaValue.valueOf(food));
 			});

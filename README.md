@@ -95,6 +95,7 @@ All bot functions:
 | bot.onMessage(func)      | nil         | Call a function *func(username, text)* with the username of the player and text of the player. |
 | bot.onRawMessage(func)   | nil         | Call a function *func(text)* with text being the raw message from chat.                        |
 | bot.onHealthChange(func) | nil         | Call a function *func(health, hunger)* with the health and hunger update.                      |
+| bot.getUsername()        | string      | Get the username of the bot.                                                                   |
 
 
 ## Authors
