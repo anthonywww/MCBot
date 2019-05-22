@@ -237,20 +237,18 @@ public class SelfPlayer extends Player {
 		statusClient.getSession().setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, new ServerInfoHandler() {
 			@Override
 			public void handle(Session session, ServerStatusInfo info) {
-				logger.info("Server Version: " + info.getVersionInfo().getVersionName() + ", "
-						+ info.getVersionInfo().getProtocolVersion());
-				logger.info("Player Count: " + info.getPlayerInfo().getOnlinePlayers() + " / "
-						+ info.getPlayerInfo().getMaxPlayers());
+				logger.info("Server Version: " + info.getVersionInfo().getVersionName() + ", " + info.getVersionInfo().getProtocolVersion());
+				logger.info("Player Count: " + info.getPlayerInfo().getOnlinePlayers() + " / " + info.getPlayerInfo().getMaxPlayers());
 				logger.info("Players: " + Arrays.toString(info.getPlayerInfo().getPlayers()));
 				logger.info("Description: " + info.getDescription().getFullText());
-				logger.info("Icon: " + info.getIcon());
+				logger.fine("Icon: " + info.getIcon());
 			}
 		});
 
 		statusClient.getSession().setFlag(MinecraftConstants.SERVER_PING_TIME_HANDLER_KEY, new ServerPingTimeHandler() {
 			@Override
 			public void handle(Session session, long pingTime) {
-				logger.info("Response in: " + pingTime + "ms.");
+				logger.info("Server ping response " + pingTime + "ms.");
 			}
 		});
 
@@ -451,7 +449,6 @@ public class SelfPlayer extends Player {
 
 				if (event.getCause() instanceof ConnectException) {
 					logger.warning("Failed to connect to server! (" + event.getCause().getMessage() + ")");
-					// MCBot.getInstance().shutdown();
 					return;
 				}
 

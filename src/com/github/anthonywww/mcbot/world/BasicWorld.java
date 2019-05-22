@@ -14,6 +14,7 @@ import com.github.anthonywww.mcbot.world.block.Chunk;
 import com.github.anthonywww.mcbot.world.block.ChunkLocation;
 import com.github.anthonywww.mcbot.world.block.TileEntity;
 import com.github.anthonywww.mcbot.world.entity.Entity;
+import com.github.anthonywww.mcbot.world.entity.LivingEntity;
 import com.github.anthonywww.mcbot.world.pathfinding.EuclideanHeuristic;
 import com.github.anthonywww.mcbot.world.pathfinding.PathSearchProvider;
 import com.github.anthonywww.mcbot.world.pathfinding.astar.AStarPathSearchProvider;
@@ -202,8 +203,11 @@ public class BasicWorld implements World, EventListener {
 		EventBus eventBus = MCBot.getInstance().getEventBus();
 		eventBus.unregister(this);
 		synchronized (entities) {
-			for (Entity entity : entities)
-				entity.setDead(true);
+			for (Entity entity : entities) {
+				if (entity instanceof LivingEntity) {
+					((LivingEntity) entity).setDead(true);
+				}
+			}
 			entities.clear();
 		}
 		synchronized (chunks) {

@@ -140,7 +140,7 @@ public class MCBot {
 			blockRegistry.add(name, defaultState, blockStates);
 		}
 		
-		terminal.print(Level.INFO, "Loaded " + blockRegistry.getSize() + " blocks into the block registry.");
+		terminal.print(Level.INFO, "Loaded " + blockRegistry.getSize() + " BlockStates into the block registry.");
 		
 		// TODO: Load items from resources/assets/items.json
 //		JsonElement itemElements = parser.parse(FileHelper.readAsset("items.json"));
