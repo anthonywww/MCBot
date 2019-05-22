@@ -1,25 +1,35 @@
 package com.github.anthonywww.mcbot.world.block;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 public class BlockRegistry {
 	
 	private static final Logger logger = Logger.getLogger("");
-	
+	private HashMap<Integer, BlockType> registry;
 	
 	public BlockRegistry() {
-		
+		registry = new HashMap<Integer, BlockType>();
 	}
 	
 	/**
 	 * Add BlockState to the block registry
 	 * @param name
-	 * @param defaultState
-	 * @param blockStates
+	 * @param defaultInternalId
+	 * @param internalIds
 	 */
-	public void add(String name, int defaultState, int[] blockStates) {
+	public void add(String name, int defaultInternalId, int[] internalIds) {
+		// Remove minecraft: from names
+		BlockType type = BlockType.getByName(name.substring(10));
+
+		if (type == BlockType.UNDEFINED) {
+			logger.warning(String.format("[Block Registry] Block '%s' could not be matched with a BlockType.", name));
+		}
+
+		logger.finest("[Block Registry] Adding " + type.getName() + ": " + name + " " + defaultInternalId + " " + Arrays.toString(internalIds));
 		
+<<<<<<< HEAD
 		 BlockType type = BlockType.getByName(name.substring(10));
 		 
 		 if (type == BlockType.UNDEFINED) {
@@ -27,10 +37,33 @@ public class BlockRegistry {
 		 }
 		 
 		 logger.info(type.getName() + ": " + name + " " + defaultState + " " + Arrays.toString(blockStates));
+=======
+		for (int i : internalIds) {
+			registry.put(i, type);
+		}
+	}
+
+	/**
+	 * Get a BlockType from the Internal ID (State ID)
+	 */
+	public BlockType getBlockTypeFromInternalId(int internalId) {
+		return registry.get(internalId);
+>>>>>>> 17b5f0239adaae0a906f697792c9c51b18e214a7
 	}
 	
-	public void getBlockIdFromBlockState() {
-		
+	/**
+	 * Get a Internal Id from BlockType
+	 * @param blockType
+	 * @return
+	 */
+	public int getDefaultInternalIdFromBlockType(BlockType blockType) {
+		for (int i : registry.keySet()) {
+			BlockType b = registry.get(i);
+			if (blockType == b) {
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 }

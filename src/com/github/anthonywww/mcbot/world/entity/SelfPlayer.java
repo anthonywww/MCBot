@@ -3,6 +3,7 @@ package com.github.anthonywww.mcbot.world.entity;
 import java.net.ConnectException;
 import java.net.Proxy;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -312,31 +313,57 @@ public class SelfPlayer extends Player {
 
 				event.getSession().send(new ClientPlayerPositionPacket(isOnGround(), getX(), getY(), getZ()));
 			}
-
 			
 			// Chunk handling
 			else if (event.getPacket() instanceof ServerChunkDataPacket) {
 				ServerChunkDataPacket packet = (ServerChunkDataPacket) event.getPacket();
-				final Chunk[] chunks = packet.getColumn().getChunks();
+				
+				final Chunk[] chunkSections = packet.getColumn().getChunks();
 				final int[] biomes = packet.getColumn().getBiomeData();
 				final int chunkX = packet.getColumn().getX();
 				final int chunkZ = packet.getColumn().getZ();
 				final CompoundTag[] tileEntities = packet.getColumn().getTileEntities();
 				
-				for (Chunk c : chunks) {
-					if (c != null) {
-						for (BlockState s : c.getBlocks().getStates()) {
-							if (s != null) {
-								int x = 0;
-								int y = 0;
-								int z = 0;
-								//logger.fine("BlockState: " + s.toString() + " ");
+				//worldX = (horizPos >> 4 & 15) + (chunkX * 16);
+				//worldY = vertPos;
+				//worldZ = (horizPos & 15) + (chunkZ * 16);
+				
+				if (chunkX == 0 && chunkZ == 0) {
+					int hPos = 0;
+					int vPos = 0;
+					for (int chunkIndex=0; chunkIndex<chunkSections.length; chunkIndex++) {
+						vPos = chunkIndex;
+						if (chunkSections[chunkIndex] != null) {
+							List<BlockState> states = chunkSections[chunkIndex].getBlocks().getStates();
+							for (int stateIndex=0; stateIndex<states.size(); stateIndex++) {
+								hPos = stateIndex;
+								int x = (hPos >> 4 & 15) + (chunkX * 16);
+								int y = vPos;
+								int z = (hPos & 15) + (chunkZ * 16);
+								System.out.println(x + " " + y + " " + z + " -> " + MCBot.getInstance().getBlockRegistry().getBlockTypeFromInternalId(states.get(stateIndex).getId()));
 							}
+							
 						}
 					}
 				}
 				
-				//logger.fine(String.format("Chunk Data Packet: %d %d: %s %s %s", chunkX, chunkZ, Arrays.toString(chunks), Arrays.toString(biomes), Arrays.toString(tileEntities)));
+				
+//				for (Chunk c : chunks) {
+//					if (c != null && chunkX == 0 && chunkZ == 0) {
+//						int i = 0;
+//						for (BlockState s : c.getBlocks().getStates()) {
+//							if (s != null) {
+//								int x = i >> (16 * chunkX);
+//								int y = i;
+//								int z = i >> (16 * chunkZ);
+//								logger.fine("X=" + x + " Y=" + y + " Z=" + z + " Block: " + MCBot.getInstance().getBlockRegistry().getBlockTypeFromInternalId(s.getId()) + " " + s.toString() + " ");
+//							}
+//							i++;
+//						}
+//					}
+//				}
+//				
+//				logger.fine(String.format("Chunk Data Packet: %d %d: %s %s %s", chunkX, chunkZ, Arrays.toString(chunks), Arrays.toString(biomes), Arrays.toString(tileEntities)));
 			}
 			
 			
