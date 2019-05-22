@@ -1,6 +1,5 @@
 package com.github.anthonywww.mcbot.world.block;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -26,8 +25,6 @@ public class BlockRegistry {
 		if (type == BlockType.UNDEFINED) {
 			logger.warning(String.format("[Block Registry] Block '%s' could not be matched with a BlockType.", name));
 		}
-
-		logger.finest("[Block Registry] Adding " + type.getName() + ": " + name + " " + defaultInternalId + " " + Arrays.toString(internalIds));
 		
 		for (int i : internalIds) {
 			registry.put(i, type);

@@ -4,6 +4,7 @@ import java.util.logging.Level;
 
 import com.github.anthonywww.mcbot.MCBot;
 import com.github.anthonywww.mcbot.cli.ICLICommand;
+import com.github.anthonywww.mcbot.utils.Vector3d;
 
 public class GotoCommand implements ICLICommand {
 	
@@ -12,14 +13,16 @@ public class GotoCommand implements ICLICommand {
 		
 		if (params.length == 3) {
 			try {
-				double dx = Double.parseDouble(params[0]);
-				double dy = Double.parseDouble(params[1]);
-				double dz = Double.parseDouble(params[2]);
+				final double dx = Double.parseDouble(params[0]);
+				final double dy = Double.parseDouble(params[1]);
+				final double dz = Double.parseDouble(params[2]);
+				final Vector3d position = MCBot.getInstance().getPlayer().getPosition();
 				
 				MCBot.getInstance().log(Level.INFO, "Walking to [" + dx + ", " + dy + ", " + dz + "] ...");
 				
-				// FIXME: Use path finding
+				// TODO: Use path finding
 				
+				MCBot.getInstance().getPlayer().move(position.getX() - dx, position.getY() - dy, position.getZ() - dz);
 				
 				return;
 			} catch (NumberFormatException e) {}

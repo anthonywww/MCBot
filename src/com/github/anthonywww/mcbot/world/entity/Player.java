@@ -27,18 +27,6 @@ public class Player extends LivingEntity {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	public String getUsername() {
 		return username;
 	}

@@ -19,11 +19,12 @@ public final class BotConfig implements Runnable {
 	private String serverAddress;
 	private int serverPort;
 	private String prefix;
+	@Option(names={"-f", "--friend"}, description="Set bot friend list.", arity="1..*", paramLabel="<friend>")
 	private List<String> friends;
 	private String joinMessage;
 	private int respawnDelay;
-	private double maxFollowRange;
-	private double minFollowRange;
+	private float maxFollowRange;
+	private float minFollowRange;
 
 	public BotConfig() {
 		this.logLevel = Level.FINEST;
@@ -34,8 +35,8 @@ public final class BotConfig implements Runnable {
 		this.prefix = "!";
 		this.friends = new ArrayList<String>();
 		this.joinMessage = "";
-		this.maxFollowRange = 300.0;
-		this.minFollowRange = 1.0;
+		this.maxFollowRange = 300.0f;
+		this.minFollowRange = 1.0f;
 	}
 	
 	public Level getLogLevel() {
@@ -110,13 +111,7 @@ public final class BotConfig implements Runnable {
 		return friends;
 	}
 	
-	@Option(names={"-f", "--friend"}, description="Set bot friend list.", arity="1..*", paramLabel="<friend>")
 	public void addFriend(String username) {
-		if (username.length() >= 30) {
-			final String err = "addFriend() must be less than 30 characters.";
-			System.err.println(err);
-			throw new IllegalArgumentException(err);
-		}
 		this.friends.add(username.trim());
 	}
 	
@@ -153,11 +148,11 @@ public final class BotConfig implements Runnable {
 		this.respawnDelay = respawnDelay;
 	}
 
-	public double getMaxFollowRange() {
+	public float getMaxFollowRange() {
 		return maxFollowRange;
 	}
 
-	public void setMaxFollowRange(double maxFollowRange) {
+	public void setMaxFollowRange(float maxFollowRange) {
 		if (respawnDelay <= 0.0) {
 			final String err = "setMaxFollowRange() must be greater than 0.0.";
 			System.err.println(err);
@@ -166,11 +161,11 @@ public final class BotConfig implements Runnable {
 		this.maxFollowRange = maxFollowRange;
 	}
 
-	public double getMinFollowRange() {
+	public float getMinFollowRange() {
 		return minFollowRange;
 	}
 
-	public void setMinFollowRange(double minFollowRange) {
+	public void setMinFollowRange(float minFollowRange) {
 		if (respawnDelay < 0.0) {
 			final String err = "setMinFollowRange() must be greater than or equal to 0.0.";
 			System.err.println(err);

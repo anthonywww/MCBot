@@ -1,68 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="src">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
-			<attribute name="module" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="resources/libraries/jars/jansi-1.17.1.jar" sourcepath="resources/libraries/sources/jansi-1.17.1-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/MCBot/resources/libraries/javadocs/jansi-1.17.1-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="resources/libraries/jars/jline-2.14.5.jar" sourcepath="resources/libraries/jars/jline-2.14.5.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/MCBot/resources/libraries/javadocs/jline-2.14.5-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="resources/libraries/jars/mcprotocollib-1.13.2-1-SNAPSHOT.jar" sourcepath="resources/libraries/jars/mcprotocollib-1.13.2-1-SNAPSHOT.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/MCBot/resources/libraries/javadocs/mcprotocollib-1.13.2-1-SNAPSHOT-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="resources/libraries/jars/picocli-3.9.2.jar" sourcepath="resources/libraries/jars/picocli-3.9.2.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/MCBot/resources/libraries/javadocs/picocli-3.9.2-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="resources/libraries/jars/packetlib-1.4-SNAPSHOT.jar" sourcepath="resources/libraries/sources/packetlib-1.4-SNAPSHOT-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/MCBot/resources/libraries/javadocs/packetlib-1.4-SNAPSHOT-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="resources/libraries/jars/mcauthlib-1.1-SNAPSHOT.jar" sourcepath="resources/libraries/sources/mcauthlib-1.1-SNAPSHOT-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/MCBot/resources/libraries/javadocs/mcauthlib-1.1-SNAPSHOT-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="resources/libraries/jars/netty-all-4.1.33.Final.jar" sourcepath="resources/libraries/sources/netty-all-4.1.33.Final-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/MCBot/resources/libraries/javadocs/netty-all-4.1.33.Final-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="resources/libraries/jars/gson-2.8.5.jar" sourcepath="resources/libraries/sources/gson-2.8.5-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/MCBot/resources/libraries/javadocs/gson-2.8.5-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="resources/libraries/jars/opennbt-1.2-SNAPSHOT.jar" sourcepath="resources/libraries/sources/opennbt-1.2-SNAPSHOT-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/MCBot/resources/libraries/javadocs/opennbt-1.2-SNAPSHOT-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="resources/libraries/jars/luaj-jse-3.0.1.jar" sourcepath="resources/libraries/sources/luaj-jse-3.0.1-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/MCBot/resources/libraries/javadocs/luaj-jse-3.0.1-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="resources/libraries/jars/joml-1.9.12.jar" sourcepath="resources/libraries/sources/joml-1.9.12-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/MCBot/resources/libraries/javadocs/joml-1.9.12-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="resources/libraries/jars/arduino.jar"/>
-	<classpathentry kind="lib" path="resources/libraries/jars/jSerialComm-1.3.11.jar"/>
+	<classpathentry kind="lib" path="resources/libraries/jars/gson-2.8.5.jar"/>
+	<classpathentry kind="lib" path="resources/libraries/jars/jansi-1.17.1.jar"/>
+	<classpathentry kind="lib" path="resources/libraries/jars/jline-2.14.5.jar"/>
+	<classpathentry kind="lib" path="resources/libraries/jars/luaj-jse-3.0.1.jar"/>
+	<classpathentry kind="lib" path="resources/libraries/jars/mcauthlib-1.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="resources/libraries/jars/mcprotocollib-1.13.2-1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="resources/libraries/jars/netty-all-4.1.33.Final.jar"/>
+	<classpathentry kind="lib" path="resources/libraries/jars/opennbt-1.2-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="resources/libraries/jars/packetlib-1.4-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="resources/libraries/jars/picocli-3.9.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

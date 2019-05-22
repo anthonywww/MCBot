@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import com.github.anthonywww.mcbot.MCBot;
 import com.github.anthonywww.mcbot.Terminal;
+import com.github.anthonywww.mcbot.cli.AnsiColor;
 import com.github.anthonywww.mcbot.cli.ICLICommand;
 
 public class HelpCommand implements ICLICommand {
@@ -16,14 +17,14 @@ public class HelpCommand implements ICLICommand {
 			for (ICLICommand c : MCBot.getInstance().getTerminal().getRegisteredCommands()) {
 				if (c.commandName().equalsIgnoreCase(params[1])) {
 					logger.info("---- Help for '" + c.commandName() + "' ----");
-					logger.info(String.format(Terminal.colorize("§a%s§r  -  §6%s§r"), c.commandName(), c.commandDescription()));	
+					logger.info(String.format(Terminal.colorize(AnsiColor.GREEN + "%s" + AnsiColor.RESET + "  -  " + AnsiColor.GOLD + "%s" + AnsiColor.RESET), c.commandName(), c.commandDescription()));
 				}
 			}
 			return;
 		}
 		logger.info("---- Help Commands ----");
 		for (ICLICommand c : MCBot.getInstance().getTerminal().getRegisteredCommands()) {
-			logger.info(String.format(Terminal.colorize("§a%s§r  -  §6%s§r"), c.commandName(), c.commandDescription()));
+			logger.info(String.format(Terminal.colorize(AnsiColor.GREEN + "%s" + AnsiColor.RESET + "  -  " + AnsiColor.GOLD + "%s" + AnsiColor.RESET), c.commandName(), c.commandDescription()));
 		}
 	}
 

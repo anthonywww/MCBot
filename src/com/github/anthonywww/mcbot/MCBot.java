@@ -4,8 +4,6 @@ import java.net.ConnectException;
 import java.net.Proxy;
 import java.util.Arrays;
 import java.util.Map.Entry;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.logging.Level;
 
 import javax.naming.InvalidNameException;
@@ -28,7 +26,6 @@ import com.github.anthonywww.mcbot.cli.commands.RotateCommand;
 import com.github.anthonywww.mcbot.cli.commands.SayCommand;
 import com.github.anthonywww.mcbot.event.EventBus;
 import com.github.anthonywww.mcbot.lua.LuaSandbox;
-import com.github.anthonywww.mcbot.task.Task;
 import com.github.anthonywww.mcbot.utils.FileHelper;
 import com.github.anthonywww.mcbot.utils.Timer;
 import com.github.anthonywww.mcbot.utils.Timer.Profile;
@@ -41,7 +38,7 @@ import com.google.gson.JsonParser;
 public class MCBot {
 	
 	public static final String NAME = "MCBot";
-	public static final String VERSION = "0.2.2";
+	public static final String VERSION = "0.2.3";
 	private static MCBot instance;
 	private boolean running;
 	
@@ -49,10 +46,7 @@ public class MCBot {
 	private Terminal terminal;
 	private SelfPlayer player;
 	private LuaSandbox lua;
-	//private ArduinoStatus arduino;
-	private Queue<Task> tasks;
 	private EventBus eventBus;
-	
 	private BlockRegistry blockRegistry;
 	
 	
@@ -126,7 +120,6 @@ public class MCBot {
 		
 		// ---- Initialize Components ----
 		Timer.time("core.init.components");
-		tasks = new PriorityQueue<Task>();
 		lua = new LuaSandbox();
 		player = new SelfPlayer(config.getUsername());
 		
@@ -134,9 +127,8 @@ public class MCBot {
 		
 		JsonParser parser = new JsonParser();
 		
-		// TODO: Load blocks from resources/assets/blocks.json
+		// Load internal block id's (block states) into registry
 		JsonElement blockElements = parser.parse(FileHelper.readAsset("blocks.json"));
-
 		for (Entry<String, JsonElement> jsonBlock : blockElements.getAsJsonObject().entrySet()) {
 			String name = jsonBlock.getKey();
 			JsonArray states = jsonBlock.getValue().getAsJsonObject().get("states").getAsJsonArray();
@@ -172,9 +164,6 @@ public class MCBot {
 //		}
 		
 		
-		
-		
-		
 		Timer.time("core.loop");
 		// ---- Loop ----
 		while (running) {
@@ -192,8 +181,6 @@ public class MCBot {
 		}
 		
 		
-		
-		
 		// ---- Shutdown procedure ----
 		Timer.time("shutdown");
 		
@@ -209,11 +196,8 @@ public class MCBot {
 		}
 		System.out.println("+");
 		
-		//arduino.shutdown();
 		player.disconnect();
 		terminal.shutdown();
-		
-		//Thread.currentThread().interrupt();
 		System.exit(0);
 	}
 	
@@ -266,6 +250,10 @@ public class MCBot {
 		return blockRegistry;
 	}
 	
+	/**
+	 * Get the event bus (event manager)
+	 * @return
+	 */
 	public EventBus getEventBus() {
 		return eventBus;
 	}

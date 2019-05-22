@@ -1,7 +1,6 @@
 package com.github.anthonywww.mcbot.world.entity;
 
-import org.joml.Vector3d;
-
+import com.github.anthonywww.mcbot.utils.Vector3d;
 import com.github.anthonywww.mcbot.world.World;
 import com.github.anthonywww.mcbot.world.WorldLocation;
 import com.github.anthonywww.mcbot.world.block.BlockLocation;
@@ -64,27 +63,27 @@ public class Entity {
 	}
 
 	public double getX() {
-		return position.x;
+		return position.getX();
 	}
 
 	public void setX(double x) {
-		this.position.x = x;
+		this.position.setX(x);
 	}
 
 	public double getY() {
-		return position.y;
+		return position.getY();
 	}
 
 	public void setY(double y) {
-		this.position.y = y;
+		this.position.setY(y);
 	}
 
 	public double getZ() {
-		return position.z;
+		return position.getZ();
 	}
 
 	public void setZ(double z) {
-		this.position.z = z;
+		this.position.setZ(z);
 	}
 
 	public float getYaw() {
@@ -128,17 +127,17 @@ public class Entity {
 	}
 
 	public double getVelocityHorizontalAngle() {
-		return Math.atan2(velocity.z, velocity.x);
+		return Math.atan2(velocity.getZ(), velocity.getX());
 	}
 
 	public double getVelocityVerticalAngle() {
-		return Math.atan2(velocity.y, Math.hypot(velocity.x, velocity.z));
+		return Math.atan2(velocity.getY(), Math.hypot(velocity.getX(), velocity.getZ()));
 	}
 
 	public void accelerate(double horizAngle, double vertAngle, double accel) {
-		velocity.x += accel * Math.cos(horizAngle) * Math.cos(vertAngle);
-		velocity.z += accel * Math.sin(horizAngle) * Math.cos(vertAngle);
-		velocity.y += accel * Math.sin(vertAngle);
+		velocity.setX(velocity.getX() + (accel * Math.cos(horizAngle) * Math.cos(vertAngle)));
+		velocity.setZ(velocity.getZ() + (accel * Math.sin(horizAngle) * Math.cos(vertAngle)));
+		velocity.setY(velocity.getY() + (accel * Math.sin(vertAngle)));
 	}
 
 	public void accelerate(double horizAngle, double vertAngle, double accel, double velocityBound) {
@@ -150,31 +149,31 @@ public class Entity {
 		double vzb = velocityBound * Math.sin(horizAngle) * Math.cos(vertAngle);
 		double vyb = velocityBound * Math.sin(vertAngle);
 
-		if (vxb < 0 && velocity.x > vxb) {
-			velocity.x = Math.max(vxb, velocity.x - ax);
-		} else if (vxb > 0 && velocity.x < vxb) {
-			velocity.x = Math.min(vxb, velocity.x + ax);
+		if (vxb < 0 && velocity.getX() > vxb) {
+			velocity.setX(Math.max(vxb, velocity.getX() - ax));
+		} else if (vxb > 0 && velocity.getX() < vxb) {
+			velocity.setX(Math.min(vxb, velocity.getX() + ax));
 		}
 
-		if (vzb < 0 && velocity.z > vzb) {
-			velocity.z = Math.max(vzb, velocity.z - az);
-		} else if (vzb > 0 && velocity.z < vzb) {
-			velocity.z = Math.min(vzb, velocity.z + az);
+		if (vzb < 0 && velocity.getZ() > vzb) {
+			velocity.setZ(Math.max(vzb, velocity.getZ() - az));
+		} else if (vzb > 0 && velocity.getZ() < vzb) {
+			velocity.setZ(Math.min(vzb, velocity.getZ() + az));
 		}
 		
-		if (vyb < 0 && velocity.y > vyb) {
-			velocity.y = Math.max(vyb, velocity.y - ay);
-		} else if (vyb > 0 && velocity.y < vyb) {
-			velocity.y = Math.min(vyb, velocity.y + ay);
+		if (vyb < 0 && velocity.getY() > vyb) {
+			velocity.setY(Math.max(vyb, velocity.getY() - ay));
+		} else if (vyb > 0 && velocity.getY() < vyb) {
+			velocity.setY(Math.min(vyb, velocity.getY() + ay));
 		}
 	}
 
 	public double getDistanceTo(double x, double y, double z) {
-		return Math.sqrt(Math.pow(this.position.x - x, 2) + Math.pow(this.position.y - y, 2) + Math.pow(this.position.z - z, 2));
+		return Math.sqrt(Math.pow(this.position.getX() - x, 2) + Math.pow(this.position.getY() - y, 2) + Math.pow(this.position.getZ() - z, 2));
 	}
 
 	public int getDistanceToSquared(double x, double y, double z) {
-		return (int) (Math.pow(this.position.x - x, 2) + Math.pow(this.position.y - y, 2) + Math.pow(this.position.z - z, 2));
+		return (int) (Math.pow(this.position.getX() - x, 2) + Math.pow(this.position.getY() - y, 2) + Math.pow(this.position.getZ() - z, 2));
 	}
 
 	public double getDistanceTo(Entity other) {

@@ -225,6 +225,26 @@ public final class MathHelper {
 		return (float) Math.sqrt(getDistanceSq(x1, y1, z1, x2, y2, z2));
 	}
 	
+	/**
+	 * Get the length of a 3-dimensional vector squared
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return
+	 */
+	public static final double get3DVectorLengthSquared(final double x, final double y, final double z) {
+		return x * x + y * y + z * z;
+	}
 	
+	/**
+	 * Get the length of a 3-dimensional vector
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return
+	 */
+	public static final double get3DVectorLength(final double x, final double y, final double z) {
+		return Math.sqrt(get3DVectorLength(x, y, z));
+	}
 	
 }
