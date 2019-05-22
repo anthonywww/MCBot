@@ -17,7 +17,6 @@ public class Entity {
 	protected float pitch;
 	protected Entity rider;
 	protected Entity riding;
-	protected boolean dead;
 
 	public Entity(int entityId) {
 		this(entityId, "");
@@ -33,7 +32,6 @@ public class Entity {
 		this.position = position;
 		this.velocity = velocity;
 		this.size = new Vector3d(1, 1, 1);
-		this.dead = false;
 		this.yaw = 0.0f;
 		this.pitch = 0.0f;
 	}
@@ -118,14 +116,6 @@ public class Entity {
 		this.riding = riding;
 	}
 	
-	public boolean isDead() {
-		return dead;
-	}
-
-	public void setDead(boolean dead) {
-		this.dead = dead;
-	}
-
 	public double getVelocityHorizontalAngle() {
 		return Math.atan2(velocity.getZ(), velocity.getX());
 	}
