@@ -13,16 +13,18 @@ public class GotoCommand implements ICLICommand {
 		
 		if (params.length == 3) {
 			try {
-				final double dx = Double.parseDouble(params[0]);
-				final double dy = Double.parseDouble(params[1]);
-				final double dz = Double.parseDouble(params[2]);
 				final Vector3d position = MCBot.getInstance().getPlayer().getPosition();
-				
+				double dx = Double.parseDouble(params[0]) + 0.5;
+				double dy = Double.parseDouble(params[1]) + 0.5;
+				double dz = Double.parseDouble(params[2]) + 0.5;
 				MCBot.getInstance().log(Level.INFO, "Walking to [" + dx + ", " + dy + ", " + dz + "] ...");
 				
-				// TODO: Use path finding
+				dx -= position.getX();
+				dy -= position.getY();
+				dz -= position.getZ();
 				
-				MCBot.getInstance().getPlayer().move(position.getX() - dx, position.getY() - dy, position.getZ() - dz);
+				// TODO: Use path finding
+				MCBot.getInstance().getPlayer().move(dx, dy, dz);
 				
 				return;
 			} catch (NumberFormatException e) {}

@@ -64,7 +64,16 @@ public class SelfPlayer extends Player {
 		}
 		return false;
 	}
-
+	
+	/**
+	 * Connect to a Minecraft Server
+	 * @param address
+	 * @param port
+	 * @param proxy
+	 * @param username
+	 * @param password
+	 * @throws ConnectException
+	 */
 	public final synchronized void connect(String address, int port, Proxy proxy, String username, String password)
 			throws ConnectException {
 
@@ -105,12 +114,19 @@ public class SelfPlayer extends Player {
 		client.getSession().connect(true);
 	}
 
+	/**
+	 * Gracefully disconnect from the Minecraft Server
+	 */
 	public final synchronized void disconnect() {
 		if (client.getSession().isConnected()) {
 			client.getSession().disconnect("Finished");
 		}
 	}
 
+	/**
+	 * Send a chat message
+	 * @param message
+	 */
 	public void sendMessage(String message) {
 		if (client != null) {
 			if (client.getSession() != null) {
