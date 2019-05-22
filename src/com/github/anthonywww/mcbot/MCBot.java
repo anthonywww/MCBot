@@ -38,7 +38,7 @@ import com.google.gson.JsonParser;
 public class MCBot {
 	
 	public static final String NAME = "MCBot";
-	public static final String VERSION = "0.2.3";
+	public static final String VERSION = "0.2.4";
 	private static MCBot instance;
 	private boolean running;
 	
