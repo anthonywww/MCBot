@@ -5,6 +5,8 @@
 MCBot is a programmable Minecraft Bot built for 1.13 servers.
 This bot can run Lua scripts and run automation tasks in game. 
 
+[https://www.youtube.com/watch?v=JWh-3f5Os60](https://www.youtube.com/watch?v=JWh-3f5Os60)
+
 Minecraft is a open-world voxel sandbox game with both single-player and multi-player capabilities.
 Standard gameplay involves players surviving hostile creatures in game by building shelters and crafting
 items in game with an optional route to "complete" the game.
