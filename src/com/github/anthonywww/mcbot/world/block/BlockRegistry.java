@@ -52,5 +52,13 @@ public class BlockRegistry {
 		}
 		return -1;
 	}
+
+	/**
+	 * Get the size of the registry
+	 * @return
+	 */
+	public int getSize() {
+		return registry.size();
+	}
 	
 }

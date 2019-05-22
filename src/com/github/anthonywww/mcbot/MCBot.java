@@ -59,9 +59,6 @@ public class MCBot {
 		System.out.println("Initializing ...");
 		this.config = config;
 		
-		blockRegistry = new BlockRegistry();
-		
-		
 		// -- Initialize --
 		Timer.time("core.init.terminal.events");
 		terminal = new Terminal();
@@ -120,10 +117,9 @@ public class MCBot {
 		
 		// ---- Initialize Components ----
 		Timer.time("core.init.components");
+		blockRegistry = new BlockRegistry();
 		lua = new LuaSandbox();
 		player = new SelfPlayer(config.getUsername());
-		
-		terminal.print(Level.FINE, "Friends: " + Arrays.toString(config.getFriends().toArray()));
 		
 		JsonParser parser = new JsonParser();
 		
@@ -144,6 +140,7 @@ public class MCBot {
 			blockRegistry.add(name, defaultState, blockStates);
 		}
 		
+		terminal.print(Level.INFO, "Loaded " + blockRegistry.getSize() + " blocks into the block registry.");
 		
 		// TODO: Load items from resources/assets/items.json
 //		JsonElement itemElements = parser.parse(FileHelper.readAsset("items.json"));
@@ -184,17 +181,20 @@ public class MCBot {
 		// ---- Shutdown procedure ----
 		Timer.time("shutdown");
 		
+		
 		// FIXME: temporary
-		System.out.println("+ PROFILER STATS");
-		System.out.println("| Name | Delta");
+		terminal.print(Level.FINEST, "+ PROFILER STATS");
+		terminal.print(Level.FINEST, "| Name | Delta");
 		for (Profile p : Timer.getProfiles()) {
 			try {
-				System.out.println(String.format("| %s | %.2fms", p.getName(), Timer.getTimeInMillis(p.getName())));
+				terminal.print(Level.FINEST, String.format("| %s | %.2fms", p.getName(), Timer.getTimeInMillis(p.getName())));
 			} catch (InvalidNameException e) {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("+");
+		terminal.print(Level.FINEST, "+");
+		// FIXME: temporary
+		
 		
 		player.disconnect();
 		terminal.shutdown();

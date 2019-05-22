@@ -65,7 +65,7 @@ for i=1, i<4 do
 	moveTurn()
 	
 	-- Wait 1000 milliseconds (1 second)
-	bot.wait(1000)
+	bot.sleep(1000)
 end
 ```
 
