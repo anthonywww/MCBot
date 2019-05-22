@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 import com.github.anthonywww.mcbot.MCBot;
 import com.github.anthonywww.mcbot.cli.ICLICommand;
 
-public class FriendsCommand implements ICLICommand {
+public class FriendCommand implements ICLICommand {
 
 	private static final Logger logger = Logger.getLogger("");
 	
@@ -51,7 +51,7 @@ public class FriendsCommand implements ICLICommand {
 
 	@Override
 	public String commandName() {
-		return "friends";
+		return "friend";
 	}
 
 	@Override

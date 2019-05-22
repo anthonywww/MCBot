@@ -14,7 +14,7 @@ import com.github.anthonywww.mcbot.cli.ICLIEvent;
 import com.github.anthonywww.mcbot.cli.ICLIInvalidCommand;
 import com.github.anthonywww.mcbot.cli.commands.ChunkCommand;
 import com.github.anthonywww.mcbot.cli.commands.ExitCommand;
-import com.github.anthonywww.mcbot.cli.commands.FriendsCommand;
+import com.github.anthonywww.mcbot.cli.commands.FriendCommand;
 import com.github.anthonywww.mcbot.cli.commands.GotoCommand;
 import com.github.anthonywww.mcbot.cli.commands.HealthCommand;
 import com.github.anthonywww.mcbot.cli.commands.HelpCommand;
@@ -103,7 +103,7 @@ public class MCBot {
 		terminal.registerCommand(new MoveCommand());
 		terminal.registerCommand(new RotateCommand());
 		terminal.registerCommand(new GotoCommand());
-		terminal.registerCommand(new FriendsCommand());
+		terminal.registerCommand(new FriendCommand());
 		terminal.registerCommand(new HealthCommand());
 		terminal.registerCommand(new InventoryCommand());
 		terminal.registerCommand(new ChunkCommand());

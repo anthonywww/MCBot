@@ -1,6 +1,6 @@
-# MCBot - Lua Programmable Minecraft Bot
-
 ![MCBot](banner.png)
+
+# MCBot - Lua Programmable Minecraft Bot
 
 MCBot is a programmable Minecraft Bot built for 1.13 servers.
 This bot can run Lua scripts and run automation tasks in game. 
@@ -35,7 +35,7 @@ chat by prefixing your messages with the `!` symbol.
 - `move forward [blocks]` - Walk *n* number of blocks forward relative to which way the bot is facing.
 - `goto <player>` - Find *player* and walk to their coordinates.
 - `goto <x> <y> <z>` - Go to the coordinates *x*, *y*, *z* in the world.
-- `friends <add/remove/list> [player]` - Add, remove, or list players the bot is friends with.
+- `friend <add/remove/list> [player]` - Add, remove, or list players the bot is friends with.
 
 ## Scripting
 
