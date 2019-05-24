@@ -4,12 +4,14 @@ import com.github.anthonywww.mcbot.utils.Vector3d;
 import com.github.anthonywww.mcbot.world.World;
 import com.github.anthonywww.mcbot.world.WorldLocation;
 import com.github.anthonywww.mcbot.world.block.BlockLocation;
+import com.github.anthonywww.mcbot.world.block.Chunk;
 
 public class Entity {
 
 	protected int id;
 	protected String name;
 	protected World world;
+	protected Chunk chunk;
 	protected Vector3d position;
 	protected Vector3d velocity;
 	protected Vector3d size;
@@ -50,6 +52,18 @@ public class Entity {
 	
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	public World getWorld() {
+		return world;
+	}
+	
+	public Chunk getChunk() {
+		return chunk;
+	}
+	
+	public BlockLocation getBlockPosition() {
+		return new BlockLocation((int) position.getX(), (int) position.getY(), (int) position.getZ());
 	}
 
 	public Vector3d getPosition() {

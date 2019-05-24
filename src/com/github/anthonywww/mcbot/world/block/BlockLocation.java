@@ -15,7 +15,7 @@ public final class BlockLocation {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		string = "BlockLocation[" + x + "," + y + "," + z + "]";
+		string = String.format("BlockLocation[%d,%d,%d]", x, y, z);
 		hashcode = string.hashCode();
 	}
 	
@@ -28,7 +28,7 @@ public final class BlockLocation {
 	}
 	
 	/**
-	 * Get X position
+	 * Get X position of the block
 	 * @return
 	 */
 	public int getX() {
@@ -36,7 +36,7 @@ public final class BlockLocation {
 	}
 	
 	/**
-	 * Get Y position
+	 * Get Y position of the block
 	 * @return
 	 */
 	public int getY() {
@@ -44,7 +44,7 @@ public final class BlockLocation {
 	}
 	
 	/**
-	 * Get Z position
+	 * Get Z position of the block
 	 * @return
 	 */
 	public int getZ() {
@@ -56,8 +56,8 @@ public final class BlockLocation {
 	 * @param other
 	 * @return
 	 */
-	public float getDistance(BlockLocation other) {
-		return (float) Math.sqrt(getDistance(other));
+	public float getDistanceTo(BlockLocation other) {
+		return (float) Math.sqrt(getDistanceToSquared(other));
 	}
 	
 	/**
@@ -65,8 +65,7 @@ public final class BlockLocation {
 	 * @param other
 	 * @return
 	 */
-	public float getDistanceSq(BlockLocation other) {
-		//return (float) (Math.pow(x - other.x, 2) + Math.pow(y - other.y, 2) + Math.pow(z - other.z, 2));
+	public float getDistanceToSquared(BlockLocation other) {
 		return MathHelper.power(x - other.x, 2) + MathHelper.power(y - other.y, 2) + MathHelper.power(z - other.z, 2);
 	}
 	
@@ -98,7 +97,6 @@ public final class BlockLocation {
 		if (!(obj instanceof BlockLocation)) {
 			return false;
 		}
-		
 		BlockLocation location = (BlockLocation) obj;
 		return location.getX() == x && location.getY() == y && location.getZ() == z;
 	}

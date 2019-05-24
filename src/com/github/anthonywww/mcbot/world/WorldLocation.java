@@ -1,5 +1,6 @@
 package com.github.anthonywww.mcbot.world;
 
+import com.github.anthonywww.mcbot.utils.MathHelper;
 import com.github.anthonywww.mcbot.world.block.BlockLocation;
 import com.github.anthonywww.mcbot.world.block.ChunkLocation;
 
@@ -38,11 +39,11 @@ public class WorldLocation {
 	}
 
 	public double getDistanceTo(WorldLocation other) {
-		return Math.sqrt(Math.pow(x - other.x, 2) + Math.pow(y - other.y, 2) + Math.pow(z - other.z, 2));
+		return Math.sqrt(getDistanceToSquared(other));
 	}
 
 	public double getDistanceToSquared(WorldLocation other) {
-		return Math.pow(x - other.x, 2) + Math.pow(y - other.y, 2) + Math.pow(z - other.z, 2);
+		return MathHelper.power(x - other.x, 2) + MathHelper.power(y - other.y, 2) + MathHelper.power(z - other.z, 2);
 	}
 
 	public WorldLocation offset(WorldLocation location) {
@@ -64,7 +65,7 @@ public class WorldLocation {
 
 	@Override
 	public String toString() {
-		return "WorldLocation[" + x + "," + y + "," + z + "]";
+		return string;
 	}
 	
 	@Override

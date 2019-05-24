@@ -179,8 +179,7 @@ public class BasicWorld implements World, EventListener {
 
 	@Override
 	public PathSearchProvider getPathFinder() {
-		// TODO Auto-generated method stub
-		return null;
+		return pathFinder;
 	}
 
 	@Override

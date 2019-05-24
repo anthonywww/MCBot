@@ -2,7 +2,6 @@ package com.github.anthonywww.mcbot;
 
 import java.net.ConnectException;
 import java.net.Proxy;
-import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 
@@ -29,6 +28,7 @@ import com.github.anthonywww.mcbot.lua.LuaSandbox;
 import com.github.anthonywww.mcbot.utils.FileHelper;
 import com.github.anthonywww.mcbot.utils.Timer;
 import com.github.anthonywww.mcbot.utils.Timer.Profile;
+import com.github.anthonywww.mcbot.world.World;
 import com.github.anthonywww.mcbot.world.block.BlockRegistry;
 import com.github.anthonywww.mcbot.world.entity.SelfPlayer;
 import com.google.gson.JsonArray;
@@ -48,7 +48,6 @@ public class MCBot {
 	private LuaSandbox lua;
 	private EventBus eventBus;
 	private BlockRegistry blockRegistry;
-	
 	
 	public MCBot(BotConfig config) {
 		if (instance != null) {
@@ -243,6 +242,14 @@ public class MCBot {
 	}
 	
 	/**
+	 * Get the event bus (event manager)
+	 * @return
+	 */
+	public EventBus getEventBus() {
+		return eventBus;
+	}
+	
+	/**
 	 * Get the block registry
 	 * @return
 	 */
@@ -250,13 +257,10 @@ public class MCBot {
 		return blockRegistry;
 	}
 	
-	/**
-	 * Get the event bus (event manager)
-	 * @return
-	 */
-	public EventBus getEventBus() {
-		return eventBus;
-	}
+	
+	
+	
+	
 	
 	/**
 	 * Shutdown the bot

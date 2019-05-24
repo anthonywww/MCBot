@@ -4,14 +4,17 @@ import com.github.anthonywww.mcbot.world.WorldLocation;
 
 public final class ChunkLocation {
 	
-	private final int x, y, z, hashcode;
+	private final int x;
+	private final int y;
+	private final int z;
+	private final int hashcode;
 	private final String string;
 
 	public ChunkLocation(int x, int y, int z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		string = String.format("Chunk[%d,%d,%d]", x, y, z);
+		string = String.format("ChunkLocation[%d,%d,%d]", x, y, z);
 		hashcode = string.hashCode();
 	}
 

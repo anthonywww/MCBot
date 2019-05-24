@@ -13,7 +13,16 @@ import com.github.anthonywww.mcbot.cli.ICLICommand;
 import com.github.anthonywww.mcbot.utils.MathHelper;
 import com.github.anthonywww.mcbot.utils.Timer;
 import com.github.anthonywww.mcbot.utils.Vector3d;
+import com.github.anthonywww.mcbot.world.BasicWorld;
+import com.github.anthonywww.mcbot.world.Difficulty;
+import com.github.anthonywww.mcbot.world.Dimension;
 import com.github.anthonywww.mcbot.world.WorldLocation;
+import com.github.anthonywww.mcbot.world.WorldType;
+import com.github.anthonywww.mcbot.world.block.Block;
+import com.github.anthonywww.mcbot.world.block.BlockLocation;
+import com.github.anthonywww.mcbot.world.block.BlockType;
+import com.github.anthonywww.mcbot.world.block.Chunk;
+import com.github.anthonywww.mcbot.world.block.ChunkLocation;
 import com.github.steveice10.mc.auth.exception.request.InvalidCredentialsException;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
 import com.github.steveice10.mc.protocol.MinecraftConstants;
@@ -40,6 +49,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.Serv
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerChunkDataPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerSpawnPositionPacket;
+import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
@@ -74,8 +84,7 @@ public class SelfPlayer extends Player {
 	 * @param password
 	 * @throws ConnectException
 	 */
-	public final synchronized void connect(String address, int port, Proxy proxy, String username, String password)
-			throws ConnectException {
+	public final synchronized void connect(String address, int port, Proxy proxy, String username, String password) throws ConnectException {
 
 		if (client != null) {
 			if (client.getSession() != null) {
@@ -273,12 +282,28 @@ public class SelfPlayer extends Player {
 				setGamemode(packet.getGameMode());
 				setOnGround(true);
 
-				// TODO: add world handlers
-				packet.getWorldType();
-				packet.getDifficulty();
-				packet.getDimension();
+				// TODO: statistic handles
 				packet.getHardcore();
 				packet.getMaxPlayers();
+				packet.getReducedDebugInfo();
+				
+				try {
+					WorldType worldType = WorldType.DEFAULT;
+					Dimension dimension = Dimension.getDimensionById(packet.getDimension());
+					Difficulty difficulty = Difficulty.NORMAL;
+					
+					if (packet.getWorldType() != null) {
+						worldType = WorldType.parseWorldType(packet.getWorldType().name());
+					}
+					
+					if (packet.getDifficulty() != null) {
+						difficulty = Difficulty.parseDifficulty(packet.getDifficulty().name());
+					}
+					
+					world = new BasicWorld(worldType, 256, dimension, difficulty);
+				} catch (Exception e) {
+					MCBot.getInstance().getTerminal().handleException(e);
+				}
 
 				logger.info(Terminal.colorize(AnsiColor.GREEN + "Successfully connected to server." + AnsiColor.RESET));
 
@@ -347,35 +372,44 @@ public class SelfPlayer extends Player {
 
 			// Chunk handling
 			else if (event.getPacket() instanceof ServerChunkDataPacket) {
-//				ServerChunkDataPacket packet = (ServerChunkDataPacket) event.getPacket();
-//				final Chunk[] chunkSections = packet.getColumn().getChunks();
-//				final int[] biomes = packet.getColumn().getBiomeData();
-//				final int chunkX = packet.getColumn().getX();
-//				final int chunkZ = packet.getColumn().getZ();
-//				final CompoundTag[] tileEntities = packet.getColumn().getTileEntities();
-
-				// worldX = (horizPos >> 4 & 15) + (chunkX * 16);
-				// worldY = vertPos;
-				// worldZ = (horizPos & 15) + (chunkZ * 16);
-//				if (chunkX == 0 && chunkZ == 0) {
-//					int hPos = 0;
-//					int vPos = 0;
-//					for (int chunkIndex = 0; chunkIndex < chunkSections.length; chunkIndex++) {
-//						vPos = chunkIndex;
-//						if (chunkSections[chunkIndex] != null) {
-//							List<BlockState> states = chunkSections[chunkIndex].getBlocks().getStates();
-//							for (int stateIndex = 0; stateIndex < states.size(); stateIndex++) {
-//								hPos = stateIndex;
-//								int x = (hPos >> 4 & 15) + (chunkX * 16);
-//								int y = vPos;
-//								int z = (hPos & 15) + (chunkZ * 16);
-//								logger.finest(x + " " + y + " " + z + " -> " + MCBot.getInstance()
-//										.getBlockRegistry().getBlockTypeFromInternalId(states.get(stateIndex).getId()));
-//							}
-//
-//						}
-//					}
-//				}
+				ServerChunkDataPacket packet = (ServerChunkDataPacket) event.getPacket();
+				final com.github.steveice10.mc.protocol.data.game.chunk.Chunk[] chunks = packet.getColumn().getChunks();
+				final int[] biomes = packet.getColumn().getBiomeData();
+				final int chunkX = packet.getColumn().getX();
+				final int chunkZ = packet.getColumn().getZ();
+				final CompoundTag[] tileEntities = packet.getColumn().getTileEntities();
+				
+				if (chunkX != 0 || chunkZ != 0) {
+					return;
+				}
+				
+				for (int section=0; section<chunks.length; section++) {
+					if (!chunks[section].isEmpty()) {
+						ChunkLocation chunkLocation = new ChunkLocation(chunkX, section, chunkZ);
+						Chunk chunk = new Chunk(world, chunkLocation);
+						Block[] blocks = new Block[4096];
+						
+						for (int y=0; y<16; y++) {
+							for (int z=0; z<16; z++) {
+								for (int x=0; x<16; x++) {
+									final int internalId = chunks[section].getBlocks().get(x, y, z).getId();
+									final int ax = x + chunkX;
+									final int ay = y + (section * 16);
+									final int az = z + chunkZ;
+									BlockType blockType = MCBot.getInstance().getBlockRegistry().getBlockTypeFromInternalId(internalId);
+									BlockLocation blockLocation = new BlockLocation(ax, ay, az);
+									Block block = new Block(world, chunk, blockLocation, blockType);
+									chunk.setBlock(block);
+									logger.info(block.toString());
+								}
+							}
+						}
+						
+						
+						
+						
+					}
+				}
 
 			}
 

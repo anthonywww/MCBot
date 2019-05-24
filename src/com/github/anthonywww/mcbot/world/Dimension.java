@@ -15,6 +15,15 @@ public enum Dimension {
 	public int getId() {
 		return id;
 	}
+	
+	public static Dimension parseDimension(String name) {
+		for (Dimension dimension : values()) {
+			if (dimension.name().equalsIgnoreCase(name)) {
+				return dimension;
+			}
+		}
+		return null;
+	}
 
 	public static Dimension getDimensionById(int id) {
 		for (Dimension dimension : values()) {

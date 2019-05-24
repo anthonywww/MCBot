@@ -8,12 +8,22 @@ public class Block {
 	private final Chunk chunk;
 	private final BlockLocation location;
 	private final BlockType type;
+	private final int metadata;
+	private final String string;
+	private final int hashcode;
 
-	public Block(World world, Chunk chunk, BlockLocation location, BlockType type) {
+	public Block(World world, Chunk chunk, BlockLocation location, BlockType type, int metadata) {
 		this.world = world;
 		this.chunk = chunk;
 		this.location = location;
 		this.type = type;
+		this.metadata = metadata;
+		string = String.format("Block[%s,%s,%s,%s]", world.toString(), chunk.toString(), location.toString(), metadata);
+		hashcode = string.hashCode();
+	}
+	
+	public Block(World world, Chunk chunk, BlockLocation location, BlockType type) {
+		this(world, chunk, location, type, 0);
 	}
 
 	public World getWorld() {
@@ -30,5 +40,19 @@ public class Block {
 	
 	public BlockType getType() {
 		return type;
+	}
+	
+	public int getMetadata() {
+		return metadata;
+	}
+	
+	@Override
+	public String toString() {
+		return string;
+	}
+	
+	@Override
+	public int hashCode() {
+		return hashcode;
 	}
 }

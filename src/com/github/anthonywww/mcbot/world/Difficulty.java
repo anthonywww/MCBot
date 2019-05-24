@@ -17,6 +17,15 @@ public enum Difficulty {
 		return id;
 	}
 
+	public static Difficulty parseDifficulty(String name) {
+		for (Difficulty difficulty : values()) {
+			if (difficulty.name().equalsIgnoreCase(name)) {
+				return difficulty;
+			}
+		}
+		return null;
+	}
+	
 	public static Difficulty getDifficultyById(int id) {
 		for (Difficulty dimension : values()) {
 			if (dimension.getId() == id) {

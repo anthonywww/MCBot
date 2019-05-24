@@ -4,9 +4,11 @@ public enum WorldType {
 	
 	DEFAULT("default"),
 	FLAT("flat"),
-	DEFAULT_1_1("default_1_1"),
 	LARGE_BIOMES("large_biomes"),
-	AMPLIFIED("amplified");
+	AMPLIFIED("amplified"),
+	CUSTOMIZED("customized"),
+	DEBUG("debug"),
+	DEFAULT_1_1("default_1_1");
 
 	private final String name;
 
