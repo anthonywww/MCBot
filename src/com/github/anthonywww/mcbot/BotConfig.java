@@ -19,6 +19,7 @@ public final class BotConfig implements Runnable {
 	private String serverAddress;
 	private int serverPort;
 	private String prefix;
+	private String loadScript;
 	@Option(names={"-f", "--friend"}, description="Set bot friend list.", arity="1..*", paramLabel="<friend>")
 	private List<String> friends;
 	private String joinMessage;
@@ -34,6 +35,7 @@ public final class BotConfig implements Runnable {
 		this.serverPort = 25565;
 		this.prefix = "!";
 		this.friends = new ArrayList<String>();
+		this.loadScript = "";
 		this.joinMessage = "";
 		this.maxFollowRange = 300.0f;
 		this.minFollowRange = 1.0f;
@@ -105,6 +107,15 @@ public final class BotConfig implements Runnable {
 	@Option(names={"-x", "--prefix"}, description="Set bot command prefix.", arity="1", paramLabel="<prefix>")
 	public void setPrefix(String prefix) {
 		this.prefix = prefix.trim();
+	}
+	
+	@Option(names={"-S", "--script"}, description="Load this script on connect.", arity="1", paramLabel="<script>")
+	public void setLoadScript(String loadScript) {
+		this.loadScript = loadScript;
+	}
+	
+	public String getLoadScript() {
+		return loadScript;
 	}
 
 	public List<String> getFriends() {

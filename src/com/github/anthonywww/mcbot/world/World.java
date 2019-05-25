@@ -10,17 +10,27 @@ import com.github.anthonywww.mcbot.world.pathfinding.PathSearchProvider;
 
 public interface World {
 
+	/**
+	 * Get the block at these coordinates
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return
+	 */
 	public Block getBlockAt(int x, int y, int z);
 
+	/**
+	 * Get the block at this BlockLocation
+	 * @param location
+	 * @return
+	 */
 	public Block getBlockAt(BlockLocation location);
 
-	public int getBlockIdAt(int x, int y, int z);
-
-	public int getBlockIdAt(BlockLocation location);
-
-	public void setBlockIdAt(int id, int x, int y, int z);
-
-	public void setBlockIdAt(int id, BlockLocation location);
+	/**
+	 * Set the block at the block's internal BlockLocation
+	 * @param block
+	 */
+	public void setBlock(Block block);
 
 	public int getBlockMetadataAt(int x, int y, int z);
 

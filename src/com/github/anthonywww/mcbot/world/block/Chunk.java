@@ -28,14 +28,27 @@ public final class Chunk {
 		tileEntities = new HashMap<BlockLocation, TileEntity>();
 	}
 	
+	/**
+	 * Create a chunk with an empty array of 4096 blocks and an empty array of 256 biomes
+	 * @param world
+	 * @param location
+	 */
 	public Chunk(World world, ChunkLocation location) {
 		this(world, location, new Block[4096], null, null, new int[256]);
 	}
 
+	/**
+	 * Get the world that this chunk belongs to
+	 * @return
+	 */
 	public World getWorld() {
 		return world;
 	}
 
+	/**
+	 * Get the location of this chunk
+	 * @return
+	 */
 	public ChunkLocation getLocation() {
 		return location;
 	}
@@ -74,6 +87,10 @@ public final class Chunk {
 		blocks[index] = newBlock;
 		EventBus eventBus = MCBot.getInstance().getEventBus();
 		eventBus.fire(new BlockChangeEvent(world, location, oldBlock, newBlock));
+	}
+	
+	public Block getBlockAt(BlockLocation location) {
+		return getBlockAt(location.getX(), location.getY(), location.getZ());
 	}
 	
 	public Block getBlockAt(int x, int y, int z) {

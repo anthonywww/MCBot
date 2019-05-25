@@ -10,6 +10,12 @@ public final class ChunkLocation {
 	private final int hashcode;
 	private final String string;
 
+	/**
+	 * Create a new chunk location, Y must be between 0 to 15 inclusive
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
 	public ChunkLocation(int x, int y, int z) {
 		this.x = x;
 		this.y = y;

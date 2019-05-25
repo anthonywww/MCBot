@@ -51,52 +51,42 @@ public class BasicWorld implements World, EventListener {
 	public Block getBlockAt(BlockLocation location) {
 		return null;
 	}
-
+	
 	@Override
-	public int getBlockIdAt(int x, int y, int z) {
-		return 0;
-	}
-
-	@Override
-	public int getBlockIdAt(BlockLocation location) {
-		
-		return 0;
-	}
-
-	@Override
-	public void setBlockIdAt(int id, int x, int y, int z) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setBlockIdAt(int id, BlockLocation location) {
-		// TODO Auto-generated method stub
-		
+	public void setBlock(Block block) {
+		ChunkLocation chunkLocation = new ChunkLocation(block.getLocation());
+		Chunk chunk = getChunkAt(chunkLocation);
+		if (chunk == null) {
+			return;
+		}
+		chunk.setBlock(block);
 	}
 
 	@Override
 	public int getBlockMetadataAt(int x, int y, int z) {
-		// TODO Auto-generated method stub
-		return 0;
+		return getBlockMetadataAt(new BlockLocation(x, y, z));
 	}
 
 	@Override
-	public int getBlockMetadataAt(BlockLocation location) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int getBlockMetadataAt(BlockLocation blockLocation) {
+		ChunkLocation chunkLocation = new ChunkLocation(blockLocation);
+		Chunk chunk = getChunkAt(chunkLocation);
+		if (chunk == null) {
+			return -1;
+		}
+		return chunk.getBlockAt(blockLocation.getX(), blockLocation.getY(), blockLocation.getZ()).getMetadata();
 	}
 
 	@Override
 	public void setBlockMetadataAt(int metadata, int x, int y, int z) {
-		// TODO Auto-generated method stub
+		
+		
 		
 	}
 
 	@Override
 	public void setBlockMetadataAt(int metadata, BlockLocation location) {
-		// TODO Auto-generated method stub
-		
+		setBlockMetadataAt(metadata, location.getX(), location.getY(), location.getZ());
 	}
 
 	@Override
